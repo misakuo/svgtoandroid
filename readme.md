@@ -14,3 +14,8 @@
 |fill-opacity|android:fillAlpha|
 |stroke|android:strokeColor|
 |stroke-opacity|android:strokeAlpha|
+|stroke-width|android:strokeWidth|
+|stroke-linejoin|android:strokeLineJoin|
+|stroke-miterlimit|android:strokeMiterLimit|
+|stroke-linecap|android:lineCap|
+###用法
