@@ -90,10 +90,12 @@ public class ModulesUtil {
 
     public Set<String> getDrawableDirs(PsiDirectory resDir) {
         Set<String> dirs = new HashSet<String>();
-        PsiDirectory[] subdirs = resDir.getSubdirectories();
-        for (PsiDirectory dir : subdirs) {
-            if (dir.getName().contains("drawable")) {
-                dirs.add(dir.getName());
+        if (resDir != null) {
+            PsiDirectory[] subdirs = resDir.getSubdirectories();
+            for (PsiDirectory dir : subdirs) {
+                if (dir.getName().contains("drawable")) {
+                    dirs.add(dir.getName());
+                }
             }
         }
         return dirs;
@@ -101,11 +103,13 @@ public class ModulesUtil {
 
     public Set<String> getExistDpiDirs(String moduleName) {
         Set<String> dpis = new HashSet<String>();
-        for (String s : getDrawableDirs(getResDir(moduleName))) {
-            if (s.equals("drawable")) {
-                dpis.add("nodpi");
-            } else {
-                dpis.add(s.split("-")[1]);
+        if (moduleName != null) {
+            for (String s : getDrawableDirs(getResDir(moduleName))) {
+                if (s.equals("drawable")) {
+                    dpis.add("nodpi");
+                } else {
+                    dpis.add(s.split("-")[1]);
+                }
             }
         }
         return dpis;
@@ -125,6 +129,7 @@ public class ModulesUtil {
     }
 
     public boolean isAndroidProject() {
+        Logger.debug("Is Android project:" + isAndroidProject);
         return isAndroidProject;
     }
 

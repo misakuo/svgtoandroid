@@ -13,8 +13,11 @@ import com.moxun.s2v.utils.ModulesUtil;
 import com.moxun.s2v.utils.MyCellRender;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,6 +46,7 @@ public class GUI {
         frame = new JFrame("SVG to VectorDrawable");
         modulesUtil = new ModulesUtil(project);
         distDirList.clear();
+        svgPath.setFocusable(false);
         setListener();
         initModules();
     }
@@ -54,10 +58,35 @@ public class GUI {
     }
 
     private void setListener() {
+        svgPath.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                svgPath.setBackground(Color.YELLOW);
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                svgPath.setBackground(Color.WHITE);
+            }
+        });
+
+        xmlName.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                xmlName.setBackground(Color.YELLOW);
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                xmlName.setBackground(Color.WHITE);
+            }
+        });
+
         svgSelectBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showSVGChooser();
+                check();
             }
         });
 
@@ -72,25 +101,30 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String moduleName = (String) moduleChooser.getSelectedItem();
-                PsiDirectory resDir = modulesUtil.getResDir(moduleName);
-                if (resDir != null) {
-                    Logger.debug("Got res dir " + resDir.getVirtualFile().getPath());
-                    Logger.debug("Existing drawable dirs " + modulesUtil.getDrawableDirs(resDir));
+                if (moduleName != null) {
+                    PsiDirectory resDir = modulesUtil.getResDir(moduleName);
+                    if (resDir != null) {
+                        Logger.debug("Got res dir " + resDir.getVirtualFile().getPath());
+                        Logger.debug("Existing drawable dirs " + modulesUtil.getDrawableDirs(resDir));
+                    }
                 }
 
                 if (modulesUtil.isAndroidProject()) {
-                    new Transformer.Builder()
-                            .setProject(project)
-                            .setSVG(svg)
-                            .setDpi((String) dpiChooser.getSelectedItem())
-                            .setModule(moduleName)
-                            .setXmlName(xmlName.getText())
-                            .create()
-                            .transforming();
+                    if (check()) {
+                        new Transformer.Builder()
+                                .setProject(project)
+                                .setSVG(svg)
+                                .setDpi((String) dpiChooser.getSelectedItem())
+                                .setModule(moduleName)
+                                .setXmlName(xmlName.getText())
+                                .create()
+                                .transforming();
 
-                    frame.dispose();
+                        frame.dispose();
+                    }
                 } else {
                     ErrorMessage.show(project,"Current project is not an Android project!");
+                    frame.dispose();
                 }
 
             }
@@ -152,5 +186,25 @@ public class GUI {
         frame.pack();
         frame.setLocationRelativeTo(frame.getParent());
         frame.setVisible(true);
+    }
+
+    private boolean check() {
+        boolean pass = false;
+        if (svgPath.getText().isEmpty()) {
+            svgPath.setBackground(new Color(0xff, 0xae, 0xb9));
+            pass = false;
+        } else {
+            svgPath.setBackground(Color.WHITE);
+            pass = true;
+        }
+
+        if (xmlName.getText().isEmpty()) {
+            xmlName.setBackground(new Color(0xff, 0xae, 0xb9));
+            pass = false;
+        } else {
+            xmlName.setBackground(Color.WHITE);
+            pass = true;
+        }
+        return pass;
     }
 }
