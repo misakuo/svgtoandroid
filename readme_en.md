@@ -30,7 +30,8 @@ Open `Preferences -> Plugins -> Browse Repositories` in IDE, searching `SVG2Vect
 - Click button`···`, choosing a svg file;  
 - choosing module that you want to generating xml in first combobox, choosing dpi in second combobox, if the dpi dir (like `drawable-xxhdpi`) is already exists, the fontcolor in combox is BLACK ,else the fontcolor is GRAY. If choosed dir not exists, plugin will creating the dir;    
 - Inputing file name for xml, default is `vector_drawable_ + ${svgName}.xml`
-- Click`Generate`, plugin will generating xml and open it on editor(if xml file existed before generating,the content will be overwitten)  
+- Click`Generate`, plugin will generating xml and open it on editor(if xml file existed before generating,the content will be overwitten)   
+ 
 ###Todos  
 - supporting `transform` attr of SVG
 
