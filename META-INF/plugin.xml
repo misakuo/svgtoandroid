@@ -1,17 +1,20 @@
 <idea-plugin version="2">
-  <id>com.yourcompany.unique.plugin.id</id>
+  <id>com.moxun.plugin.s2v</id>
   <name>SVG2VectorDrawable</name>
   <version>1.0</version>
   <vendor email="furmint@foxmail.com">moxun</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      Tools for convert SVG file to Android VectorDrawable.
+      <br>
+      <a href="https://github.com/misakuo/svgtoandroid">Sourcecode and Tutorial</a><br>
+      <a href="https://github.com/misakuo/svgtoandroid/issues">Bug report</a><br>
+      <br><em>enjoy it!</em><br>
     ]]></description>
 
   <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+      1.0<br>
+      <em>created.</em>
     ]]>
   </change-notes>
 

@@ -192,11 +192,11 @@ public class SVGParser {
     }
 
     public String getViewportWidth() {
-        return DensityUtil.px2dp(viewportWidth, dpi);
+        return String.valueOf(viewportWidth);
     }
 
     public String getViewportHeight() {
-        return DensityUtil.px2dp(viewportHeight, dpi);
+        return String.valueOf(viewportHeight);
     }
 
     public String getAlpha() {

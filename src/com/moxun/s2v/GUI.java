@@ -87,6 +87,8 @@ public class GUI {
                             .setXmlName(xmlName.getText())
                             .create()
                             .transforming();
+
+                    frame.dispose();
                 } else {
                     ErrorMessage.show(project,"Current project is not an Android project!");
                 }
