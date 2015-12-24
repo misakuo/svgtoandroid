@@ -39,6 +39,7 @@
 ###Todos  
 - 支持SVG的transform属性
 
-***
 欢迎提交Issue和PR
+***
+Reference: [svg2vectordrawable](https://github.com/Ashung/svg2vectordrawable)
 
