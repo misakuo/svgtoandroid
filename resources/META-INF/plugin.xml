@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.moxun.plugin.s2v</id>
   <name>SVG2VectorDrawable</name>
-  <version>1.1</version>
+  <version>1.2</version>
   <vendor email="furmint@foxmail.com">moxun</vendor>
 
   <description><![CDATA[
@@ -13,6 +13,8 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      1.2<br>
+      <em>Fixed crash in Android Studio 2.0 Preview</em><br>
       1.1<br>
       <em>fix a little issue, close log.</em><br>
       1.0<br>
