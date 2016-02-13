@@ -1,5 +1,5 @@
 ##SVG2VectorDrawable
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-SVG2VectorDrawable-brightgreen.svg?style=flat)](http://www.android-arsenal.com/details/1/3137)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-SVG2VectorDrawable-brightgreen.svg?style=flat)](http://www.android-arsenal.com/details/1/3137)    
 [English](https://github.com/misakuo/svgtoandroid/blob/master/readme_en.md)
 ***
 ###简介
