@@ -121,7 +121,7 @@ public class Transformer {
     }
 
     private XmlFile getDistXml() {
-        String template = FileTemplateManager.getInstance(project).findInternalTemplate("vector").getText();
+        String template = FileTemplateManager.getInstance(project).getInternalTemplate("vector").getText();
         return (XmlFile) PsiFileFactory.getInstance(project).createFileFromText(xmlName, StdFileTypes.XML, template);
     }
 
