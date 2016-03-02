@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.3</version>
+    <version>1.4</version>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -9,18 +9,20 @@
       <br>
       <a href="https://github.com/misakuo/svgtoandroid">Sourcecode and Tutorial</a><br>
       <a href="https://github.com/misakuo/svgtoandroid/issues">Bug report</a><br>
-      <br><em>enjoy it!</em><br>
+      <br><b>If this tool is helpful to you, please give me a star on <a href="https://github.com/misakuo/svgtoandroid">Github</a></b><br>
     ]]></description>
 
     <change-notes><![CDATA[
+      1.4<br>
+      The 'transform' attribute on source SVG is supported now.<br>
       1.3<br>
-      <em>Fixed 'NoSuchMethodError' in older Android Studio</em><br>
+      Fixed 'NoSuchMethodError' in older Android Studio.<br>
       1.2<br>
-      <em>Fixed crash in Android Studio 2.0 Preview</em><br>
+      Fixed crash in Android Studio 2.0 Preview.<br>
       1.1<br>
-      <em>fix a little issue, close log.</em><br>
+      Fixed a little issue, close log.<br>
       1.0<br>
-      <em>created.</em>
+      Created.
     ]]>
     </change-notes>
 

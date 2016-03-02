@@ -63,7 +63,7 @@ public class Transformer {
                 rootTag.getAttribute("android:viewportHeight").setValue(svgParser.getViewportHeight());
 
                 if (svgParser.getAlpha().length() > 0) {
-                    rootTag.setAttribute("android:alpha",svgParser.getAlpha());
+                    rootTag.setAttribute("android:alpha", svgParser.getAlpha());
                 }
             } catch (NullPointerException npe) {
                 //do nothing, because those attr is exist certainly.
@@ -81,8 +81,15 @@ public class Transformer {
                         }
                     }
 
+                    if (svgGroupAttrs.keySet().contains("transform")) {
+                        Map<String, String> trans = AttrMapper.getTranslateAttrs(svgGroupAttrs.get("transform"));
+                        for (String key : trans.keySet()) {
+                            group.setAttribute(key, trans.get(key));
+                        }
+                    }
+
                     //add child tags
-                    parseShapeNode(g,group);
+                    parseShapeNode(g, group);
                     rootTag.addSubTag(group, false);
                 }
             } else {
@@ -95,7 +102,7 @@ public class Transformer {
         }
     }
 
-    private void parseShapeNode(XmlTag srcTag,XmlTag distTag) {
+    private void parseShapeNode(XmlTag srcTag, XmlTag distTag) {
         List<XmlTag> childes = svgParser.getShapeTags(srcTag);
         for (XmlTag child : childes) {
             XmlTag element = distTag.createChildTag("path", distTag.getNamespace(), null, false);
@@ -108,7 +115,7 @@ public class Transformer {
                 }
 
                 if (AttrMapper.isShapeName(child.getName())) {
-                    element.setAttribute("android:pathData",SVGAttrParser.getPathData(child));
+                    element.setAttribute("android:pathData", SVGAttrParser.getPathData(child));
                 }
             }
 
@@ -153,7 +160,7 @@ public class Transformer {
                                     break;
                                 }
                             }
-                            InfoMessage.show(project,"Generating succeeded!");
+                            InfoMessage.show(project, "Generating succeeded!");
                         }
                     }.execute();
                 }

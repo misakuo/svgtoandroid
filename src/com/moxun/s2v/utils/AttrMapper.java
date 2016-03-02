@@ -1,27 +1,32 @@
 package com.moxun.s2v.utils;
 
+import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * http://developer.android.com/reference/android/graphics/drawable/VectorDrawable.html
  * Created by moxun on 15/12/16.
  */
 public class AttrMapper {
-    private static Map<String,String> mapper = new HashMap<String, String>();
+    private static Map<String, String> mapper = new HashMap<String, String>();
 
     static {
         mapper.clear();
         mapper.put("id", "android:name");
         mapper.put("fill", "android:fillColor");
         mapper.put("fill-opacity", "android:fillAlpha");
-        mapper.put("stroke","android:strokeColor");
-        mapper.put("stroke-opacity","android:strokeAlpha");
-        mapper.put("stroke-width","android:strokeWidth");
-        mapper.put("stroke-linejoin","android:strokeLIneJoin");
-        mapper.put("stroke-miterlimit","android:strokeMiterLimit");
-        mapper.put("stroke-linecap","android:strokeLineCap");
+        mapper.put("stroke", "android:strokeColor");
+        mapper.put("stroke-opacity", "android:strokeAlpha");
+        mapper.put("stroke-width", "android:strokeWidth");
+        mapper.put("stroke-linejoin", "android:strokeLineJoin");
+        mapper.put("stroke-miterlimit", "android:strokeMiterLimit");
+        mapper.put("stroke-linecap", "android:strokeLineCap");
     }
 
     public static boolean isShapeName(String name) {
@@ -44,5 +49,54 @@ public class AttrMapper {
             Logger.warn("Skipping attr [" + svgAttrName + "], because it not supported by Android.");
         }
         return mapper.get(svgAttrName);
+    }
+
+    public static Map<String, String> getTranslateAttrs(String transAttr) {
+        Map<String, String> result = new HashMap<String, String>();
+        String tmp = transAttr.replaceAll(" ", ",");
+        String translate = StringUtils.substringBetween(tmp, "translate(", ")");
+        String scale = StringUtils.substringBetween(tmp, "scale(", ")");
+        String rotate = StringUtils.substringBetween(tmp, "rotate(", ")");
+        if (translate != null) {
+            String[] txy = translate.split(",");
+            if (txy.length == 1) {
+                result.put("android:translateX", txy[0]);
+            } else if (txy.length > 1) {
+                result.put("android:translateX", txy[0]);
+                result.put("android:translateY", txy[1]);
+            }
+        }
+
+        if (scale != null) {
+            String[] sxy = scale.split(",");
+            if (sxy.length == 1) {
+                result.put("android:scaleX", sxy[0]);
+                result.put("android:scaleY", sxy[0]);
+            } else if (sxy.length > 1) {
+                result.put("android:scaleX", sxy[0]);
+                result.put("android:scaleY", sxy[1]);
+            }
+        }
+
+        if (rotate != null) {
+            String[] rxy = rotate.split(",");
+            if (rxy.length == 1) {
+                result.put("android:rotation", rxy[0]);
+            } else if (rxy.length == 2) {
+                result.put("android:rotation", rxy[0]);
+                result.put("android:pivotX", rxy[1]);
+            } else if (rxy.length > 2) {
+                result.put("android:rotation", rxy[0]);
+                result.put("android:pivotX", rxy[1]);
+                result.put("android:pivotY", rxy[2]);
+            }
+        }
+        return result;
+    }
+
+    //test case
+    public static void main(String args[]) {
+        String s = "translate(100 50),scale(0.5) rotate(30,100,100)";
+        System.out.println(getTranslateAttrs(s));
     }
 }

@@ -8,7 +8,7 @@
  - 图形化界面
  - 自动解析当前Project，如果当前Project为Android Project，则会列出所有Module   
  - 支持将SVG解析为多种dpi的VectorDrawable  
- 
+ - 支持SVG的transform属性
 ###属性对应
 |SVG Attribute|VectorDrawable Attribute| 
 |:-:|:-:| 
@@ -21,6 +21,7 @@
 |stroke-linejoin|android:strokeLineJoin|
 |stroke-miterlimit|android:strokeMiterLimit|
 |stroke-linecap|android:lineCap|
+|transform|android:{scaleX/Y | translateX/Y | pivotX/Y | rotation}|
 
 ###使用
 ####安装  
@@ -37,8 +38,6 @@
 - 填入生成xml文件的文件名，默认为vector_drawable_ + SVG文件的名称
 - 点击`Generate`，插件会生成xml并在编辑器中打开（如果文件名对应的xml已存在，则会覆盖原来的内容）  
 
-###Todos  
-- 支持SVG的transform属性
 
 欢迎提交Issue和PR
 ***
