@@ -16,7 +16,7 @@ An plugin to Intellij Platform, using it to convert svg file to android VerctorD
 |stroke-linejoin|android:strokeLineJoin|
 |stroke-miterlimit|android:strokeMiterLimit|
 |stroke-linecap|android:lineCap|
-|transform|android:{scaleX/Y | translateX/Y | pivotX/Y | rotation}|
+|transform|android:{scaleX/Y \| translateX/Y \| pivotX/Y \| rotation}|
 
 ###Useage
 ####Install  

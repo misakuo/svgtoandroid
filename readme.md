@@ -9,6 +9,7 @@
  - 自动解析当前Project，如果当前Project为Android Project，则会列出所有Module   
  - 支持将SVG解析为多种dpi的VectorDrawable  
  - 支持SVG的transform属性
+ 
 ###属性对应
 |SVG Attribute|VectorDrawable Attribute| 
 |:-:|:-:| 
@@ -21,7 +22,7 @@
 |stroke-linejoin|android:strokeLineJoin|
 |stroke-miterlimit|android:strokeMiterLimit|
 |stroke-linecap|android:lineCap|
-|transform|android:{scaleX/Y | translateX/Y | pivotX/Y | rotation}|
+|transform|android:{scaleX/Y \| translateX/Y \| pivotX/Y \| rotation}|
 
 ###使用
 ####安装  
