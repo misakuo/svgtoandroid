@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.4</version>
+    <version>1.4.1</version>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -13,15 +13,18 @@
     ]]></description>
 
     <change-notes><![CDATA[
-      1.4<br>
+      <b>1.4.1</b><br>
+      Updating new ICON.<br>
+      Optimize code structure.<br>
+      <b>1.4</b><br>
       The 'transform' attribute on source SVG is supported now.<br>
-      1.3<br>
+      <b>1.3</b><br>
       Fixed 'NoSuchMethodError' in older Android Studio.<br>
-      1.2<br>
+      <b>1.2</b><br>
       Fixed crash in Android Studio 2.0 Preview.<br>
-      1.1<br>
+      <b>1.1</b><br>
       Fixed a little issue, close log.<br>
-      1.0<br>
+      <b>1.0</b><br>
       Created.
     ]]>
     </change-notes>
@@ -52,7 +55,7 @@
     <actions>
         <!-- Add your actions here -->
         <action class="com.moxun.s2v.S2V" id="moxun.s2v" text="SVG to VectorDrawable"
-                description="transforming SVG to VectorDrawable" icon="/icons/icon.png">
+                description="Tool for transforming SVG to VectorDrawable" icon="/icons/icon_new.png">
             <add-to-group group-id="MainToolBar" anchor="last"/>
         </action>
     </actions>
