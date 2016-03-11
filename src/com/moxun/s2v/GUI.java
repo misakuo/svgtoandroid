@@ -11,6 +11,7 @@ import com.moxun.s2v.message.ErrorMessage;
 import com.moxun.s2v.utils.Logger;
 import com.moxun.s2v.utils.ModulesUtil;
 import com.moxun.s2v.utils.MyCellRender;
+import com.moxun.s2v.utils.UpdateUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +33,7 @@ public class GUI {
     private JComboBox moduleChooser;
     private JButton generateButton;
     private JTextField xmlName;
+    private JLabel statusBar;
     private JFrame frame;
 
     private Project project;
@@ -43,10 +45,11 @@ public class GUI {
 
     public GUI(Project project) {
         this.project = project;
-        frame = new JFrame("SVG to VectorDrawable");
+        frame = new JFrame("SVG to VectorDrawable (1.4.2)");
         modulesUtil = new ModulesUtil(project);
         distDirList.clear();
         svgPath.setFocusable(false);
+        statusBar.setVisible(false);
         setListener();
         initModules();
     }
@@ -123,7 +126,7 @@ public class GUI {
                         frame.dispose();
                     }
                 } else {
-                    ErrorMessage.show(project,"Current project is not an Android project!");
+                    ErrorMessage.show(project, "Current project is not an Android project!");
                     frame.dispose();
                 }
 
@@ -139,12 +142,22 @@ public class GUI {
                 svg = (XmlFile) PsiManager.getInstance(project).findFile(virtualFile);
                 //got *.svg file as xml
                 svgPath.setText(virtualFile.getPath());
-                xmlName.setText("vector_drawable_" + svg.getName().split("\\.")[0] + ".xml");
+                xmlName.setText("vector_drawable_" + getValidName(svg.getName().split("\\.")[0]) + ".xml");
             } else {
-                ErrorMessage.show(project,"Please choosing a SVG file.");
+                ErrorMessage.show(project, "Please choosing a SVG file.");
             }
         }
         frame.setAlwaysOnTop(true);
+    }
+
+    private String getValidName(String s) {
+        char[] chars = s.toLowerCase().replaceAll("\\s*", "").toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (!Character.isLetter(chars[i])) {
+                chars[i] = '_';
+            }
+        }
+        return String.valueOf(chars);
     }
 
     private void showXMLChooser() {
@@ -186,6 +199,8 @@ public class GUI {
         frame.pack();
         frame.setLocationRelativeTo(frame.getParent());
         frame.setVisible(true);
+
+        //UpdateUtil.checkUpdate(statusBar);
     }
 
     private boolean check() {

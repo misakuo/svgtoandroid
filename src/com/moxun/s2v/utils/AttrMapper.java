@@ -45,7 +45,7 @@ public class AttrMapper {
     }
 
     public static String getAttrName(String svgAttrName) {
-        if (!mapper.containsKey(svgAttrName)) {
+        if (!mapper.containsKey(svgAttrName) && !svgAttrName.equals("transform")) {
             Logger.warn("Skipping attr [" + svgAttrName + "], because it not supported by Android.");
         }
         return mapper.get(svgAttrName);
@@ -53,7 +53,7 @@ public class AttrMapper {
 
     public static Map<String, String> getTranslateAttrs(String transAttr) {
         Map<String, String> result = new HashMap<String, String>();
-        String tmp = transAttr.replaceAll(" ", ",");
+        String tmp = transAttr.replaceAll(" ",  ",");
         String translate = StringUtils.substringBetween(tmp, "translate(", ")");
         String scale = StringUtils.substringBetween(tmp, "scale(", ")");
         String rotate = StringUtils.substringBetween(tmp, "rotate(", ")");
@@ -96,7 +96,7 @@ public class AttrMapper {
 
     //test case
     public static void main(String args[]) {
-        String s = "translate(100 50),scale(0.5) rotate(30,100,100)";
+        String s = "translate(100 50),scale(0.5)rotate(30,100,100)";
         System.out.println(getTranslateAttrs(s));
     }
 }

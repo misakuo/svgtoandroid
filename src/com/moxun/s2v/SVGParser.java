@@ -4,10 +4,8 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.moxun.s2v.utils.AttrMapper;
-import com.moxun.s2v.utils.DensityUtil;
-import com.moxun.s2v.utils.Logger;
-import com.moxun.s2v.utils.StdColorUtil;
+import com.moxun.s2v.utils.*;
+import org.apache.http.util.TextUtils;
 
 import java.util.*;
 
@@ -89,7 +87,7 @@ public class SVGParser {
             if (rootTag != null) {
                 for (XmlTag tag : rootTag.getSubTags()) {
                     if (tag.getName().equals("g")) {
-                        groups.add(trim(tag));
+                        groups.add(trim(tag, null));
                     }
                 }
             }
@@ -165,17 +163,56 @@ public class SVGParser {
         return styles;
     }
 
-    public XmlTag trim(XmlTag rootTag) {
+    public XmlTag trim(XmlTag rootTag, List<XmlAttribute> attr) {
         XmlTag[] subTags = rootTag.getSubTags();
+        List<XmlAttribute> attrs = new ArrayList<XmlAttribute>();
         if (subTags.length == 1 && subTags[0].getName().equals("g")) {
             Logger.debug("Tag" + rootTag + " has only a subTag and the tag is 'g'");
-            rootTag = trim(subTags[0]);
+            Collections.addAll(attrs, subTags[0].getAttributes());
+            if (attr != null) {
+                attrs.addAll(attr);
+            }
+            rootTag = trim(subTags[0], attrs);
         } else if (subTags.length > 0 && AttrMapper.isShapeName(subTags[0].getName())) {
             Logger.debug(rootTag.getSubTags()[0].getName());
             Logger.debug("Tag" + rootTag + " is correct tag.");
+            if (attr != null) {
+                for (XmlAttribute attribute : attr) {
+                    Logger.debug(attribute.getName() + ":" + attribute.getValue());
+                }
+                return AttrMergeUtil.mergeAttrs((XmlTag) rootTag.copy(), reduceAttrs(attr));
+            }
             return rootTag;
         }
         return rootTag;
+    }
+
+    //only focusing attr id & transform & fill
+    private Map<String, String> reduceAttrs(List<XmlAttribute> attributes) {
+        String uniqueId = "", uniqueFillColor = "", reducedTranslate = "";
+        for (XmlAttribute attr : attributes) {
+            if (attr.getName().equals("id")) {
+                uniqueId = attr.getValue();//后面的覆盖前面的
+            }
+            if (attr.getName().equals("fill")) {
+                uniqueFillColor = attr.getValue();
+            }
+            if (attr.getName().equals("transform")) {
+                reducedTranslate = TranslateReduceUtil.reduce(reducedTranslate, attr.getValue());
+            }
+        }
+        Map<String, String> result = new HashMap<String, String>();
+        if (!TextUtils.isEmpty(uniqueId)) {
+            result.put("id", uniqueId);
+        }
+        if (!TextUtils.isEmpty(uniqueFillColor)) {
+            result.put("fill", uniqueFillColor);
+        }
+        if (!TextUtils.isEmpty(reducedTranslate)) {
+            result.put("transform", reducedTranslate);
+        }
+        Logger.debug("Reduced Attrs:" + result.toString());
+        return result;
     }
 
     private int getNumber(String src) {

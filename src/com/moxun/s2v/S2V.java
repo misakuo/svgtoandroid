@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class S2V extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        Logger.init("SVG2VectorDrawable",Logger.INFO);
+        Logger.init("SVG2VectorDrawable", Logger.INFO);
         GUI gui = new GUI(anActionEvent.getProject());
         gui.show();
     }

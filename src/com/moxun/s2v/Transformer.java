@@ -1,7 +1,5 @@
 package com.moxun.s2v;
 
-import com.intellij.codeStyle.CodeStyleFacade;
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
@@ -15,19 +13,17 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.moxun.s2v.message.InfoMessage;
 import com.moxun.s2v.utils.*;
-import org.apache.xerces.impl.dtd.XMLAttributeDecl;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by moxun on 15/12/14.
@@ -76,6 +72,10 @@ public class Transformer {
                     //set group's attrs
                     Map<String, String> svgGroupAttrs = svgParser.getChildAttrs(g);
                     for (String key : svgGroupAttrs.keySet()) {
+                        if (key.equals("fill")) {
+                            //<group> tag not support color attr
+                            continue;
+                        }
                         if (AttrMapper.getAttrName(key) != null) {
                             group.setAttribute(AttrMapper.getAttrName(key), svgGroupAttrs.get(key));
                         }
@@ -119,8 +119,12 @@ public class Transformer {
                 }
             }
 
-            if (!childAttrs.keySet().contains("fill")) {
-                element.setAttribute("android:fillColor", "#000000");
+            if (element.getAttribute("android:fillColor") == null) {
+                if (srcTag.getAttribute("fill") != null) {
+                    element.setAttribute("android:fillColor", StdColorUtil.formatColor(srcTag.getAttribute("fill").getValue()));
+                } else {
+                    element.setAttribute("android:fillColor", "#00000000");
+                }
             }
 
             distTag.addSubTag(element, false);
@@ -143,7 +147,7 @@ public class Transformer {
                             PsiDirectory directory = modulesUtil.getOrCreateDrawableDir(moduleName, getDrawableDirName());
                             PsiFile psiFile = directory.findFile(xmlName);
                             if (psiFile != null) {
-                                Logger.debug(xmlName + "is existed, delete it.");
+                                Logger.warn(xmlName + "is existed, delete it.");
                                 psiFile.delete();
                             }
                             directory.add(file);
@@ -151,11 +155,11 @@ public class Transformer {
                             Collection<VirtualFile> virtualFiles = FilenameIndex.getVirtualFilesByName(project, xmlName, GlobalSearchScope.allScope(project));
                             for (VirtualFile vfile : virtualFiles) {
                                 if (dpi.equals("nodpi") && vfile.getPath().contains("/drawable/")) {
-                                    Logger.debug("Open file in editor: " + vfile.getPath());
+                                    Logger.info("Open file in editor: " + vfile.getPath());
                                     FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, vfile), true);
                                     break;
                                 } else if (vfile.getPath().contains(dpi)) {
-                                    Logger.debug("Open file in editor: " + vfile.getPath());
+                                    Logger.info("Open file in editor: " + vfile.getPath());
                                     FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, vfile), true);
                                     break;
                                 }
