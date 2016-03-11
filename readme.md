@@ -32,7 +32,7 @@
 #####通过插件仓库安装
 在IDE中打开Preferences -> Plugins -> Browse Repositories，搜索SVG2VectorDrawable，安装插件并重启IDE
 ####图形界面  
-![img1]+(https://raw.githubusercontent.com/misakuo/svgtoandroid/master/imgs/1.png)
+![img1](https://raw.githubusercontent.com/misakuo/svgtoandroid/master/imgs/1.png)
 ####用法
 - 点击`···`按钮，选择SVG源文件
 - 在第一个下拉选框中选中要生成xml文件的module，在第二个选框中选择生成VectorDrawable对应的分辨率，在module中已存在的分辨率目录为黑色字体，未存在的目录为灰色字体，如果选中不存在的目录，则插件会自动生成该目录  
