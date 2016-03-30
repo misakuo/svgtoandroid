@@ -4,14 +4,14 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.xml.XmlFile;
 import com.moxun.s2v.message.ErrorMessage;
 import com.moxun.s2v.utils.Logger;
 import com.moxun.s2v.utils.ModulesUtil;
 import com.moxun.s2v.utils.MyCellRender;
-import com.moxun.s2v.utils.UpdateUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +45,7 @@ public class GUI {
 
     public GUI(Project project) {
         this.project = project;
-        frame = new JFrame("SVG to VectorDrawable (1.4.2)");
+        frame = new JFrame("SVG to VectorDrawable (1.4.3)");
         modulesUtil = new ModulesUtil(project);
         distDirList.clear();
         svgPath.setFocusable(false);

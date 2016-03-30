@@ -2,7 +2,6 @@ package com.moxun.s2v.utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashSet;
 import java.util.Set;
 
 /**

@@ -1,5 +1,5 @@
 {
-"version":"1.4.2",
-"versionCode":5,
-"desc":"Optimized for Sketch exported file."
+"version":"1.4.3",
+"versionCode":6,
+"desc":"Fix bug on merge transform attributes."
 }

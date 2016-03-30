@@ -68,29 +68,7 @@ public class Transformer {
             //generate group
             if (svgParser.hasGroupTag()) {
                 for (XmlTag g : svgParser.getGroups()) {
-                    XmlTag group = rootTag.createChildTag("group", rootTag.getNamespace(), null, false);
-                    //set group's attrs
-                    Map<String, String> svgGroupAttrs = svgParser.getChildAttrs(g);
-                    for (String key : svgGroupAttrs.keySet()) {
-                        if (key.equals("fill")) {
-                            //<group> tag not support color attr
-                            continue;
-                        }
-                        if (AttrMapper.getAttrName(key) != null) {
-                            group.setAttribute(AttrMapper.getAttrName(key), svgGroupAttrs.get(key));
-                        }
-                    }
-
-                    if (svgGroupAttrs.keySet().contains("transform")) {
-                        Map<String, String> trans = AttrMapper.getTranslateAttrs(svgGroupAttrs.get("transform"));
-                        for (String key : trans.keySet()) {
-                            group.setAttribute(key, trans.get(key));
-                        }
-                    }
-
-                    //add child tags
-                    parseShapeNode(g, group);
-                    rootTag.addSubTag(group, false);
+                    parseGroup(g, rootTag);
                 }
             } else {
                 Logger.warn("Root tag has no subTag named 'group'");
@@ -99,6 +77,43 @@ public class Transformer {
             CodeStyleManager.getInstance(project).reformat(dist);
             writeXmlToDir(dist);
             Logger.debug(dist.toString());
+        }
+    }
+
+    private void parseGroup(XmlTag svgTag, XmlTag target) {
+        XmlTag group = target.createChildTag("group", target.getNamespace(), null, false);
+        //set group's attrs
+        Map<String, String> svgGroupAttrs = svgParser.getChildAttrs(svgTag);
+        for (String key : svgGroupAttrs.keySet()) {
+            if (key.equals("fill")) {
+                //<group> tag not support color attr
+                continue;
+            }
+            if (AttrMapper.getAttrName(key) != null) {
+                group.setAttribute(AttrMapper.getAttrName(key), svgGroupAttrs.get(key));
+            }
+        }
+
+        if (svgGroupAttrs.keySet().contains("transform")) {
+            Map<String, String> trans = AttrMapper.getTranslateAttrs(svgGroupAttrs.get("transform"));
+            for (String key : trans.keySet()) {
+                group.setAttribute(key, trans.get(key));
+            }
+        }
+
+        //add child tags
+        //<g> was processed.
+        parseShapeNode(svgTag, group);
+        processSubGroups(svgTag, group);
+        target.addSubTag(group, false);
+    }
+
+    private void processSubGroups(XmlTag svgTag, XmlTag parent) {
+        Map<String, String> trans = AttrMapper.getTranslateAttrs(svgTag.getAttributeValue("transform"));
+        Logger.debug("Translate for sub groups:" + trans.toString());
+        XmlTag merged = AttrMergeUtil.mergeAttrs((XmlTag) svgTag.copy(), trans);
+        for (XmlTag tag : svgParser.getSubGroups(merged)) {
+            parseGroup(tag, parent);
         }
     }
 

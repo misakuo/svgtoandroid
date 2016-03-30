@@ -1,13 +1,10 @@
 package com.moxun.s2v.utils;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * http://developer.android.com/reference/android/graphics/drawable/VectorDrawable.html
@@ -53,7 +50,8 @@ public class AttrMapper {
 
     public static Map<String, String> getTranslateAttrs(String transAttr) {
         Map<String, String> result = new HashMap<String, String>();
-        String tmp = transAttr.replaceAll(" ",  ",");
+        String tmp = transAttr.replaceAll(" ", ",");
+        tmp = tmp.replaceAll(",,", ",");
         String translate = StringUtils.substringBetween(tmp, "translate(", ")");
         String scale = StringUtils.substringBetween(tmp, "scale(", ")");
         String rotate = StringUtils.substringBetween(tmp, "rotate(", ")");
@@ -91,6 +89,7 @@ public class AttrMapper {
                 result.put("android:pivotY", rxy[2]);
             }
         }
+        Logger.debug("Attrs Transformer: " + transAttr + " ===> " + result.toString());
         return result;
     }
 
@@ -98,5 +97,7 @@ public class AttrMapper {
     public static void main(String args[]) {
         String s = "translate(100 50),scale(0.5)rotate(30,100,100)";
         System.out.println(getTranslateAttrs(s));
+        String s1 = "translate(14.000000, 14.000000)";
+        System.out.println(getTranslateAttrs(s1));
     }
 }

@@ -15,7 +15,7 @@ public class Logger {
     public static final int WARN = 1;
     public static final int ERROR = 0;
 
-    public static void init(String name,int level) {
+    public static void init(String name, int level) {
         NAME = name;
         LEVEL = level;
         NotificationsConfiguration.getNotificationsConfiguration().register(NAME, NotificationDisplayType.NONE);
@@ -24,28 +24,37 @@ public class Logger {
     public static void debug(String text) {
         if (LEVEL >= DEBUG) {
             Notifications.Bus.notify(
-                    new Notification(NAME, NAME + " [DEBUG]", text, NotificationType.INFORMATION));
+                    new Notification(NAME, NAME + " [DEBUG]", redirect(text), NotificationType.INFORMATION));
         }
     }
 
     public static void info(String text) {
         if (LEVEL > INFO) {
             Notifications.Bus.notify(
-                    new Notification(NAME, NAME + " [INFO]", text, NotificationType.INFORMATION));
+                    new Notification(NAME, NAME + " [INFO]", redirect(text), NotificationType.INFORMATION));
         }
     }
 
     public static void warn(String text) {
         if (LEVEL > WARN) {
             Notifications.Bus.notify(
-                    new Notification(NAME, NAME + " [WARN]", text, NotificationType.WARNING));
+                    new Notification(NAME, NAME + " [WARN]", redirect(text), NotificationType.WARNING));
         }
     }
 
     public static void error(String text) {
         if (LEVEL > ERROR) {
             Notifications.Bus.notify(
-                    new Notification(NAME, NAME + " [ERROR]", text, NotificationType.ERROR));
+                    new Notification(NAME, NAME + " [ERROR]", redirect(text), NotificationType.ERROR));
         }
+    }
+
+    private static String redirect(String text) {
+        if (LEVEL == DEBUG) {
+            StackTraceElement ste = new Throwable().getStackTrace()[2];
+            String tail = "\t\t\t at " + ste.toString();
+            System.err.println(text + tail);
+        }
+        return text;
     }
 }

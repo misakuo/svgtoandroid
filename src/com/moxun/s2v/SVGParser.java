@@ -110,6 +110,16 @@ public class SVGParser {
         return childes;
     }
 
+    public List<XmlTag> getSubGroups(XmlTag parent) {
+        List<XmlTag> list = new ArrayList<XmlTag>();
+        for (XmlTag tag : parent.getSubTags()) {
+            if (tag.getName().equals("g")) {
+                list.add(tag);
+            }
+        }
+        return list;
+    }
+
     public List<XmlTag> getSVGChildes() {
         List<XmlTag> childes = new ArrayList<XmlTag>();
         if (svg.getDocument() != null) {
