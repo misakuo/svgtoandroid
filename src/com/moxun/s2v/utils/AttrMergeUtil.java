@@ -27,7 +27,9 @@ public class AttrMergeUtil {
                 src.setAttribute("transform", attrs.get("transform"));
             }
         }
-        Logger.debug("Transform attrs merged:" + src.getAttribute("transform").getValue());
+        if (attrs.get("transform") != null) {
+            Logger.debug("Transform attrs merged:" + src.getAttribute("transform").getValue());
+        }
         return src;
     }
 
