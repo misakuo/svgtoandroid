@@ -103,8 +103,8 @@ public class Transformer {
 
         //add child tags
         //<g> was processed.
-        parseShapeNode(svgTag, group);
         processSubGroups(svgTag, group);
+        parseShapeNode(svgTag, group);
         target.addSubTag(group, false);
     }
 
