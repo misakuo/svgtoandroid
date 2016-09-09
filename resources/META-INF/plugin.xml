@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.4.5</version>
+    <version>1.4.6</version>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -13,6 +13,8 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>1.4.5</b><br>
+      Fix crash when no 'transform' attribute on SVG.<br>
       <b>1.4.5</b><br>
       Fix issue of element order.<br>
       <b>1.4.4</b><br>

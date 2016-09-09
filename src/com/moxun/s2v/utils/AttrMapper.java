@@ -50,6 +50,9 @@ public class AttrMapper {
 
     public static Map<String, String> getTranslateAttrs(String transAttr) {
         Map<String, String> result = new HashMap<String, String>();
+        if (transAttr == null) {
+            return result;
+        }
         String tmp = transAttr.replaceAll(" ", ",");
         tmp = tmp.replaceAll(",,", ",");
         String translate = StringUtils.substringBetween(tmp, "translate(", ")");
