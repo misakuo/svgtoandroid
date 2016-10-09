@@ -9,13 +9,13 @@ import java.util.Map;
  */
 public class AttrMergeUtil {
     public static XmlTag mergeAttrs(XmlTag src, Map<String, String> attrs) {
-        if (src.getAttribute("id") == null && attrs.get("id") != null) {
-            src.setAttribute("id", attrs.get("id"));
-        }
+        Logger.debug("MergeAttrs: " + src.getName() + ", " + attrs.toString());
 
-        if (src.getAttribute("fill") == null && attrs.get("fill") != null) {
-            src.setAttribute("fill", attrs.get("fill"));
-        }
+        copyAttr(src, "id", attrs);
+        copyAttr(src, "fill", attrs);
+        copyAttr(src, "fill-rule", attrs);
+        copyAttr(src, "stroke", attrs);
+        copyAttr(src, "stroke-width", attrs);
 
         if (src.getAttribute("transform") != null) {
             if (attrs.get("transform") != null) {
@@ -33,6 +33,12 @@ public class AttrMergeUtil {
         return src;
     }
 
+    private static void copyAttr(XmlTag target, String attrName, Map<String, String> attrs) {
+        if (target.getAttribute(attrName) == null && attrs.get(attrName) != null) {
+            target.setAttribute(attrName, attrs.get(attrName));
+        }
+    }
+
     private static String merge(String translate, String transform) {
         transform = transform.replaceAll("[\\s]", "").replaceAll("\\)", ")#");
         String[] tmp = transform.split("#");
@@ -46,6 +52,7 @@ public class AttrMergeUtil {
         for (String s : tmp) {
             result += s;
         }
+        Logger.info(translate + " / " + transform + " -> " + result);
         return result;
     }
 

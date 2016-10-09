@@ -43,7 +43,8 @@ public class TranslateReduceUtil {
 
         float rx = t1tx + t2tx;
         float ry = t1ty + t2ty;
-        String r = "translate(" + rx + "," + ry + ")";
+
+        String r = "translate(" + CommonUtil.formatFloat(rx) + "," + CommonUtil.formatFloat(ry) + ")";
         return r;
     }
 

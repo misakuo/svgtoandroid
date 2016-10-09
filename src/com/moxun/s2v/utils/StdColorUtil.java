@@ -103,7 +103,7 @@ public class StdColorUtil {
         colors.put("whitesmoke","#F5F5F5");
         colors.put("yellow","#FFFF00");
         colors.put("yellowgreen","#9ACD32");
-        colors.put("none","#00FFFFFF");
+        colors.put("none","#00000000");
     }
 
     private static String getColorRGB(String colorName) {
@@ -141,7 +141,7 @@ public class StdColorUtil {
     private static String DEC2HEX(String dec) {
         String r = Integer.toHexString(Integer.valueOf(dec));
         if (r.length() == 1) {
-            r += r;
+            r = "0" + r;
         }
         return r;
     }
@@ -149,7 +149,7 @@ public class StdColorUtil {
     private static String percent2HEX(String percent) {
         String r =  Integer.toHexString(Integer.valueOf(percent) * 255 / 100);
         if (r.length() == 1) {
-            r += r;
+            r = "0" + r;
         }
         return r;
     }

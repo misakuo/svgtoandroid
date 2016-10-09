@@ -21,9 +21,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.moxun.s2v.message.InfoMessage;
 import com.moxun.s2v.utils.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by moxun on 15/12/14.
@@ -72,7 +70,7 @@ public class Transformer {
                 }
             } else {
                 Logger.warn("Root tag has no subTag named 'group'");
-                parseShapeNode(svg.getRootTag(), rootTag);
+                parseShapeNode(svg.getRootTag(), rootTag, null);
             }
             CodeStyleManager.getInstance(project).reformat(dist);
             writeXmlToDir(dist);
@@ -84,12 +82,10 @@ public class Transformer {
         XmlTag group = target.createChildTag("group", target.getNamespace(), null, false);
         //set group's attrs
         Map<String, String> svgGroupAttrs = svgParser.getChildAttrs(svgTag);
+        List<String> acceptedAttrs = Arrays.asList("id", "transform");
+
         for (String key : svgGroupAttrs.keySet()) {
-            if (key.equals("fill")) {
-                //<group> tag not support color attr
-                continue;
-            }
-            if (AttrMapper.getAttrName(key) != null) {
+            if (AttrMapper.getAttrName(key) != null && acceptedAttrs.contains(key)) {
                 group.setAttribute(AttrMapper.getAttrName(key), svgGroupAttrs.get(key));
             }
         }
@@ -97,14 +93,17 @@ public class Transformer {
         if (svgGroupAttrs.keySet().contains("transform")) {
             Map<String, String> trans = AttrMapper.getTranslateAttrs(svgGroupAttrs.get("transform"));
             for (String key : trans.keySet()) {
-                group.setAttribute(key, trans.get(key));
+                group.setAttribute(key, CommonUtil.formatString(trans.get(key)));
             }
         }
 
         //add child tags
         //<g> was processed.
         processSubGroups(svgTag, group);
-        parseShapeNode(svgTag, group);
+
+        svgGroupAttrs.remove("id");
+        svgGroupAttrs.remove("transform");
+        parseShapeNode(svgTag, group, svgGroupAttrs);
         target.addSubTag(group, false);
     }
 
@@ -117,16 +116,30 @@ public class Transformer {
         }
     }
 
-    private void parseShapeNode(XmlTag srcTag, XmlTag distTag) {
+    private void parseShapeNode(XmlTag srcTag, XmlTag distTag, Map<String, String> existedAttrs) {
+        if (existedAttrs == null) {
+            existedAttrs = new HashMap<String, String>();
+        }
         List<XmlTag> childes = svgParser.getShapeTags(srcTag);
         for (XmlTag child : childes) {
             XmlTag element = distTag.createChildTag("path", distTag.getNamespace(), null, false);
-            Map<String, String> childAttrs = svgParser.getChildAttrs(child);
-            for (String key : childAttrs.keySet()) {
+            existedAttrs.putAll(svgParser.getChildAttrs(child));
+            Logger.debug("Existed attrs: " + existedAttrs);
+
+            for (String key : existedAttrs.keySet()) {
                 if (AttrMapper.getAttrName(key) != null && AttrMapper.getAttrName(key).contains("Color")) {
-                    element.setAttribute(AttrMapper.getAttrName(key), StdColorUtil.formatColor(childAttrs.get(key)));
+                    element.setAttribute(AttrMapper.getAttrName(key), StdColorUtil.formatColor(existedAttrs.get(key)));
                 } else if (AttrMapper.getAttrName(key) != null) {
-                    element.setAttribute(AttrMapper.getAttrName(key), childAttrs.get(key));
+                    if (AttrMapper.getAttrName(key).equals("android:fillType")) {
+                        String value = existedAttrs.get(key).toLowerCase();
+                        String xmlValue = "nonZero";
+                        if (value.equals("evenodd")) {
+                            xmlValue = "evenOdd";
+                        }
+                        element.setAttribute("android:fillType", xmlValue);
+                    } else {
+                        element.setAttribute(AttrMapper.getAttrName(key), existedAttrs.get(key));
+                    }
                 }
 
                 if (AttrMapper.isShapeName(child.getName())) {

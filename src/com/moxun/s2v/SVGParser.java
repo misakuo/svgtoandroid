@@ -5,7 +5,6 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.moxun.s2v.utils.*;
-import org.apache.http.util.TextUtils;
 
 import java.util.*;
 
@@ -174,53 +173,47 @@ public class SVGParser {
     }
 
     public XmlTag trim(XmlTag rootTag, List<XmlAttribute> attr) {
+        Logger.debug("Current tag: " + rootTag.getName());
+        CommonUtil.dumpAttrs("current attr", Arrays.asList(rootTag.getAttributes()));
+        CommonUtil.dumpAttrs("parent attr", attr);
+        if (attr == null) {
+            attr = new ArrayList<XmlAttribute>();
+            attr.addAll(Arrays.asList(rootTag.getAttributes()));
+        }
         XmlTag[] subTags = rootTag.getSubTags();
         List<XmlAttribute> attrs = new ArrayList<XmlAttribute>();
         if (subTags.length == 1 && subTags[0].getName().equals("g")) {
             Logger.debug("Tag" + rootTag + " has only a subTag and the tag is 'g'");
             Collections.addAll(attrs, subTags[0].getAttributes());
-            if (attr != null) {
-                attrs.addAll(attr);
-            }
+            attrs.addAll(attr);
             rootTag = trim(subTags[0], attrs);
         } else if (subTags.length > 0 && AttrMapper.isShapeName(subTags[0].getName())) {
             Logger.debug(rootTag.getSubTags()[0].getName());
             Logger.debug("Tag" + rootTag + " is correct tag.");
-            if (attr != null) {
-                for (XmlAttribute attribute : attr) {
-                    Logger.debug(attribute.getName() + ":" + attribute.getValue());
-                }
-                return AttrMergeUtil.mergeAttrs((XmlTag) rootTag.copy(), reduceAttrs(attr));
+            for (XmlAttribute attribute : attr) {
+                Logger.debug(attribute.getName() + ":" + attribute.getValue());
             }
-            return rootTag;
+            return AttrMergeUtil.mergeAttrs((XmlTag) rootTag.copy(), reduceAttrs(attr));
         }
         return rootTag;
     }
 
     //only focusing attr id & transform & fill
     private Map<String, String> reduceAttrs(List<XmlAttribute> attributes) {
-        String uniqueId = "", uniqueFillColor = "", reducedTranslate = "";
+        CommonUtil.dumpAttrs("Will reduce", attributes);
+        String reducedTranslate = "";
+        Map<String, String> result = new HashMap<String, String>();
         for (XmlAttribute attr : attributes) {
-            if (attr.getName().equals("id")) {
-                uniqueId = attr.getValue();//后面的覆盖前面的
-            }
-            if (attr.getName().equals("fill")) {
-                uniqueFillColor = attr.getValue();
-            }
             if (attr.getName().equals("transform")) {
                 reducedTranslate = TranslateReduceUtil.reduce(reducedTranslate, attr.getValue());
+            } else {
+                if (!result.containsKey(attr.getName())) {
+                    result.put(attr.getName(), attr.getValue());
+                }
             }
         }
-        Map<String, String> result = new HashMap<String, String>();
-        if (!TextUtils.isEmpty(uniqueId)) {
-            result.put("id", uniqueId);
-        }
-        if (!TextUtils.isEmpty(uniqueFillColor)) {
-            result.put("fill", uniqueFillColor);
-        }
-        if (!TextUtils.isEmpty(reducedTranslate)) {
-            result.put("transform", reducedTranslate);
-        }
+
+        result.put("transform", reducedTranslate);
         Logger.debug("Reduced Attrs:" + result.toString());
         return result;
     }

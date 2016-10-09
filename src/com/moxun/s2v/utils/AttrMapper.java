@@ -18,6 +18,7 @@ public class AttrMapper {
         mapper.put("id", "android:name");
         mapper.put("fill", "android:fillColor");
         mapper.put("fill-opacity", "android:fillAlpha");
+        mapper.put("fill-rule", "android:fillType");
         mapper.put("stroke", "android:strokeColor");
         mapper.put("stroke-opacity", "android:strokeAlpha");
         mapper.put("stroke-width", "android:strokeWidth");
@@ -92,7 +93,7 @@ public class AttrMapper {
                 result.put("android:pivotY", rxy[2]);
             }
         }
-        Logger.debug("Attrs Transformer: " + transAttr + " ===> " + result.toString());
+        Logger.debug("Attrs Transformer: " + transAttr + " -> " + result.toString());
         return result;
     }
 

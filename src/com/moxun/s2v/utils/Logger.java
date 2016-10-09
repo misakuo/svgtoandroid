@@ -52,8 +52,9 @@ public class Logger {
     private static String redirect(String text) {
         if (LEVEL == DEBUG) {
             StackTraceElement ste = new Throwable().getStackTrace()[2];
-            String tail = "\t\t\t at " + ste.toString();
-            System.err.println(text + tail);
+            String prefix = ste.getFileName();
+            int lineNum = ste.getLineNumber();
+            System.err.println("D/svgtoandroid: (" + prefix + ":" + lineNum + ") " + text);
         }
         return text;
     }
