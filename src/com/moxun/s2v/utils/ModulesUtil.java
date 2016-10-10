@@ -1,9 +1,16 @@
 package com.moxun.s2v.utils;
 
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +24,8 @@ public class ModulesUtil {
 
     public ModulesUtil(Project project) {
         this.project = project;
+        getModules();
+        getCurrentModule();
     }
 
     public Set<String> getModules() {
@@ -36,6 +45,19 @@ public class ModulesUtil {
         }
         Logger.debug(modules.toString());
         return modules;
+    }
+
+    public @Nullable String getCurrentModule() {
+        Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+        String path = FileDocumentManager.getInstance().getFile(editor.getDocument()).getPath();
+        VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(path.substring(0,path.indexOf("/src")));
+        if (virtualFile!= null && virtualFile.isDirectory()) {
+            PsiDirectory directory = PsiDirectoryFactory.getInstance(project).createDirectory(virtualFile);
+            if (isModule(directory)) {
+                return directory.getName();
+            }
+        }
+        return null;
     }
 
     public PsiDirectory getResDir(String moduleName) {

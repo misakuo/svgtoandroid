@@ -2,17 +2,30 @@ package com.moxun.s2v.utils;
 
 
 import com.google.gson.Gson;
+import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
+import com.moxun.s2v.Configuration;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by moxun on 16/3/10.
  */
 public class UpdateUtil {
-    private static final int VERSION = 4;
+    private static int VERSION = Integer.MAX_VALUE;
     private static final String URL = "https://raw.githubusercontent.com/misakuo/svgtoandroid/master/version.js";
 
-    public static void checkUpdate(final JLabel status) {
+    public static void checkUpdate(final Project project) {
+        if (!Configuration.isAutoCheckUpdate()) {
+            Logger.info("Ignore check update");
+            return;
+        }
+        VERSION = Integer.valueOf(CommonUtil.loadMetaInf("vcode", VERSION + ""));
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -25,8 +38,10 @@ public class UpdateUtil {
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    status.setVisible(true);
-                                    status.setText("Update is valid:" + data.desc);
+                                    CommonUtil.showTopic(project,
+                                            "Plugin SVG to VectorDrawable Update",
+                                            "version: " + data.version + "<br>" + data.desc,
+                                            NotificationType.INFORMATION);
                                 }
                             });
                         }

@@ -22,7 +22,6 @@ import com.moxun.s2v.message.InfoMessage;
 import com.moxun.s2v.utils.*;
 
 import java.util.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -169,7 +168,7 @@ public class Transformer {
         return (XmlFile) PsiFileFactory.getInstance(project).createFileFromText(xmlName, StdFileTypes.XML, template);
     }
 
-    public void writeXmlToDirAndOpen(XmlFile file) {
+    public void writeXmlToDir(final XmlFile file, final boolean needOpen) {
         try {
             ApplicationManager.getApplication().invokeLater(new Runnable() {
                 @Override
@@ -180,46 +179,32 @@ public class Transformer {
                             PsiDirectory directory = modulesUtil.getOrCreateDrawableDir(moduleName, getDrawableDirName());
                             PsiFile psiFile = directory.findFile(xmlName);
                             if (psiFile != null) {
-                                Logger.warn(xmlName + "is existed, delete it.");
-                                psiFile.delete();
-                            }
-                            directory.add(file);
-
-                            Collection<VirtualFile> virtualFiles = FilenameIndex.getVirtualFilesByName(project, xmlName, GlobalSearchScope.allScope(project));
-                            for (VirtualFile vfile : virtualFiles) {
-                                if (dpi.equals("nodpi") && vfile.getPath().contains("/drawable/")) {
-                                    Logger.info("Open file in editor: " + vfile.getPath());
-                                    FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, vfile), true);
-                                    break;
-                                } else if (vfile.getPath().contains(dpi)) {
-                                    Logger.info("Open file in editor: " + vfile.getPath());
-                                    FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, vfile), true);
-                                    break;
+                                if (Configuration.isOverrideExisted()) {
+                                    Logger.warn(xmlName + " is existed, delete it.");
+                                    psiFile.delete();
+                                    directory.add(file);
+                                    Logger.info("Generating " + file.getName() + " success!");
+                                } else {
+                                    Logger.warn(xmlName + " is existed, skip it.");
                                 }
-                            }
-                            InfoMessage.show(project, "Generating succeeded!");
-                        }
-                    }.execute();
-                }
-            });
-        } catch (Exception e) {
-            Logger.warn("error with async writing.");
-        }
-    }
-
-    public void writeXmlToDir(XmlFile file) {
-        try {
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    new WriteCommandAction(project) {
-                        @Override
-                        protected void run(@NotNull Result result) throws Throwable {
-                            PsiDirectory directory = modulesUtil.getOrCreateDrawableDir(moduleName, getDrawableDirName());
-                            PsiFile psiFile = directory.findFile(xmlName);
-                            if (psiFile == null) {
-                                Logger.warn(xmlName + "is existed, skip it.");
+                            } else {
                                 directory.add(file);
+                                Logger.info("Generating " + file.getName() + " success!");
+                            }
+
+                            if (needOpen) {
+                                Collection<VirtualFile> virtualFiles = FilenameIndex.getVirtualFilesByName(project, xmlName, GlobalSearchScope.allScope(project));
+                                for (VirtualFile vfile : virtualFiles) {
+                                    if (dpi.equals("nodpi") && vfile.getPath().contains("/drawable/")) {
+                                        Logger.info("Open file in editor: " + vfile.getPath());
+                                        FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, vfile), true);
+                                        break;
+                                    } else if (vfile.getPath().contains(dpi)) {
+                                        Logger.info("Open file in editor: " + vfile.getPath());
+                                        FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, vfile), true);
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }.execute();

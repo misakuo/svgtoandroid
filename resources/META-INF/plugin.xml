@@ -1,7 +1,8 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.4.6</version>
+    <version>1.5</version>
+    <vcode>10</vcode>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -54,6 +55,7 @@
         <!-- Add your extensions here -->
         <internalFileTemplate name="vector"/>
         <fileTypeFactory implementation="com.moxun.s2v.MyFileTypeFactory"/>
+        <applicationConfigurable instance="com.moxun.s2v.Configuration"/>
     </extensions>
 
     <application-components>
@@ -69,6 +71,10 @@
         <action class="com.moxun.s2v.S2V" id="moxun.s2v" text="SVG to VectorDrawable"
                 description="Tool for transforming SVG to VectorDrawable" icon="/icons/icon_new.png">
             <add-to-group group-id="MainToolBar" anchor="last"/>
+        </action>
+        
+        <action class="com.moxun.s2v.GenerateAction" id="GenerateAction" text="VectorDrawable">
+            <add-to-group group-id="GenerateGroup" anchor="first"/>
         </action>
     </actions>
 

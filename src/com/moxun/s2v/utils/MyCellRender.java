@@ -1,5 +1,7 @@
 package com.moxun.s2v.utils;
 
+import com.intellij.ui.JBColor;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Set;
@@ -17,9 +19,9 @@ public class MyCellRender extends JLabel implements ListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         this.setText(value.toString());
         if (!dpis.contains(value.toString())) {
-            this.setForeground(Color.GRAY);
+            this.setForeground(JBColor.GRAY);
         } else {
-            this.setForeground(Color.BLACK);
+            this.setForeground(JBColor.BLACK);
         }
         return this;
     }

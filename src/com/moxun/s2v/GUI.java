@@ -1,29 +1,27 @@
 package com.moxun.s2v;
 
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.ui.JBColor;
 import com.moxun.s2v.message.ErrorMessage;
 import com.moxun.s2v.message.InfoMessage;
-import com.moxun.s2v.utils.Logger;
-import com.moxun.s2v.utils.ModulesUtil;
-import com.moxun.s2v.utils.MyCellRender;
+import com.moxun.s2v.utils.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.*;
+import java.util.*;
 
 /**
  * Created by moxun on 15/12/14.
@@ -36,25 +34,21 @@ public class GUI {
     private JComboBox moduleChooser;
     private JButton generateButton;
     private JTextField xmlName;
-    private JLabel statusBar;
-    private JCheckBox checkBox;
+    private JCheckBox batch;
     private JFrame frame;
 
     private Project project;
-    private final String DRAWABLE = "drawable";
     private Set<String> distDirList = new HashSet<String>();
     private ModulesUtil modulesUtil;
-    private boolean choiceFiles = false;
     private XmlFile svg;
     private PsiDirectory svgDir;
 
     public GUI(Project project) {
         this.project = project;
-        frame = new JFrame("SVG to VectorDrawable (1.4.3)");
+        frame = new JFrame("SVG to VectorDrawable (" + CommonUtil.loadMetaInf("version", "") + ")");
         modulesUtil = new ModulesUtil(project);
         distDirList.clear();
         svgPath.setFocusable(false);
-        statusBar.setVisible(false);
         setListener();
         initModules();
     }
@@ -66,38 +60,35 @@ public class GUI {
     }
 
     private void setListener() {
-        checkBox.addActionListener(new ActionListener() {
+        batch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (choiceFiles != checkBox.isSelected()) {
-                    svgPath.setText("");
-                    xmlName.setText("");
-                }
-                choiceFiles = checkBox.isSelected();
+                svgPath.setText("");
+                xmlName.setText("");
             }
         });
 
         svgPath.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                svgPath.setBackground(Color.YELLOW);
+                svgPath.setBackground(JBColor.YELLOW);
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                svgPath.setBackground(Color.WHITE);
+                svgPath.setBackground(JBColor.WHITE);
             }
         });
 
         xmlName.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                xmlName.setBackground(Color.YELLOW);
+                xmlName.setBackground(JBColor.YELLOW);
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                xmlName.setBackground(Color.WHITE);
+                xmlName.setBackground(JBColor.WHITE);
             }
         });
 
@@ -128,8 +119,8 @@ public class GUI {
                     }
                 }
                 if (modulesUtil.isAndroidProject()) {
-                    if (check() && !choiceFiles) {
-                        Transformer transformer = new Transformer.Builder()
+                    if (check() && !batch.isSelected()) {
+                        final Transformer transformer = new Transformer.Builder()
                                 .setProject(project)
                                 .setSVG(svg)
                                 .setDpi((String) dpiChooser.getSelectedItem())
@@ -140,30 +131,45 @@ public class GUI {
                         transformer.transforming(new Transformer.CallBack() {
                             @Override
                             public void onComplete(XmlFile dist) {
-                                transformer.writeXmlToDirAndOpen(dist);
+                                transformer.writeXmlToDir(dist, true);
+                                CommonUtil.showTopic(project,
+                                        "SVG to VectorDrawable",
+                                        "Generating completed.<br>" + dist.getName(),
+                                        NotificationType.INFORMATION);
                             }
                         });
-                    } else if (check() && choiceFiles) {
+                    } else if (check() && batch.isSelected()) {
+                        final java.util.List<String> files = new ArrayList<String>();
                         for (PsiFile svg : svgDir.getFiles()) {
-                            if (svg != null && !svg.isDirectory() && svg.getName().endsWith(".svg")) {
-                                Transformer transformer = new Transformer.Builder()
+                            if (svg != null && !svg.isDirectory() && svg.getName().toLowerCase().endsWith(".svg")) {
+                                final Transformer transformer = new Transformer.Builder()
                                         .setProject(project)
                                         .setSVG((XmlFile) svg)
                                         .setDpi((String) dpiChooser.getSelectedItem())
                                         .setModule(moduleName)
-                                        .setXmlName(svg.getName().replace(".svg", ".xml"))
+                                        .setXmlName(CommonUtil.getValidName(svg.getName().split("\\.")[0]) + ".xml")
                                         .create();
 
                                 Transformer.CallBack callBack = new Transformer.CallBack() {
                                     @Override
                                     public void onComplete(XmlFile dist) {
-                                        transformer.writeXmlToDir(dist);
+                                        transformer.writeXmlToDir(dist, false);
+                                        files.add(dist.getName());
                                     }
                                 };
                                 transformer.transforming(callBack);
                             }
                         }
-                        InfoMessage.show(project, "Generating succeeded!");
+
+                        String msg = "";
+                        for (String s : files) {
+                            msg = msg + s + "<br>";
+                        }
+
+                        CommonUtil.showTopic(project,
+                                "SVG to VectorDrawable",
+                                "Generating completed." + msg,
+                                NotificationType.INFORMATION);
                     }
                     frame.dispose();
                 } else {
@@ -175,66 +181,28 @@ public class GUI {
     }
 
     private void showSVGChooser() {
-        FileChooserDescriptor descriptor = new FileChooserDescriptor(!choiceFiles, choiceFiles, false, false, false, false);
+        FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+        if (!batch.isSelected()) {
+            descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor("svg");
+        }
         VirtualFile virtualFile = FileChooser.chooseFile(descriptor, project, null);
         if (virtualFile != null) {
-            if (!virtualFile.isDirectory() && virtualFile.getName().endsWith("svg")) {
+            if (!virtualFile.isDirectory() && virtualFile.getName().toLowerCase().endsWith("svg")) {
                 svg = (XmlFile) PsiManager.getInstance(project).findFile(virtualFile);
                 //got *.svg file as xml
                 svgPath.setText(virtualFile.getPath());
                 xmlName.setEditable(true);
-                xmlName.setText("vector_drawable_" + getValidName(svg.getName().split("\\.")[0]) + ".xml");
+                xmlName.setEnabled(true);
+                xmlName.setText(CommonUtil.getValidName(svg.getName().split("\\.")[0]) + ".xml");
             } else if (virtualFile.isDirectory()) {
                 svgDir = PsiManager.getInstance(project).findDirectory(virtualFile);
                 svgPath.setText(virtualFile.getPath());
                 xmlName.setEditable(false);
+                xmlName.setEnabled(false);
                 xmlName.setText("keep origin name");
             }
         }
         frame.setAlwaysOnTop(true);
-    }
-
-    private String getValidName(String s) {
-        char[] chars = s.toLowerCase().replaceAll("\\s*", "").toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (!Character.isLetter(chars[i])) {
-                chars[i] = '_';
-            }
-        }
-        return String.valueOf(chars);
-    }
-
-    private void showXMLChooser() {
-        FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-        VirtualFile virtualFile = FileChooser.chooseFile(descriptor, project, null);
-        if (virtualFile != null) {
-            if (virtualFile.isDirectory() && virtualFile.getName().startsWith(DRAWABLE)) {
-                PsiDirectory directory = PsiDirectoryFactory.getInstance(project).createDirectory(virtualFile);
-                PsiDirectory[] dirs = directory.getParentDirectory().getSubdirectories();
-                for (PsiDirectory dir : dirs) {
-                    if (dir.isDirectory() && dir.getName().contains(DRAWABLE)) {
-                        System.out.println(dir.getName() + " is dist dir");
-                        if (dir.getName().equals(DRAWABLE)) {
-                            distDirList.add("nodpi");
-                        } else {
-                            String[] tmp = dir.getName().split("-");
-                            if (tmp.length == 2) {
-                                distDirList.add(tmp[1]);
-                            }
-                        }
-                    }
-                }
-                System.out.println(distDirList.toString());
-                //String template = FileTemplateManager.getInstance(project).findInternalTemplate("vector").getText();
-                //XmlFile xml = (XmlFile) PsiFileFactory.getInstance(project).createFileFromText("export.xml", StdFileTypes.XML,template);
-                //got *.xml file as XmlFile
-                //directory.add(xml);
-                //System.out.println(xml.toString());
-            } else {
-                System.out.println(virtualFile.getName());
-                //not a drawable dir
-            }
-        }
     }
 
     public void show() {
@@ -244,7 +212,7 @@ public class GUI {
         frame.setLocationRelativeTo(frame.getParent());
         frame.setVisible(true);
 
-        //UpdateUtil.checkUpdate(statusBar);
+        UpdateUtil.checkUpdate(project);
     }
 
     private boolean check() {

@@ -7,7 +7,7 @@ import com.intellij.notification.*;
  * Created by moxun on 15/11/27.
  */
 public class Logger {
-    private static String NAME;
+    public static String NAME;
     private static int LEVEL = 0;
 
     public static final int DEBUG = 3;
