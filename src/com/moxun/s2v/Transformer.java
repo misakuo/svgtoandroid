@@ -22,6 +22,11 @@ import com.moxun.s2v.message.InfoMessage;
 import com.moxun.s2v.utils.*;
 
 import java.util.*;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by moxun on 15/12/14.
@@ -40,7 +45,7 @@ public class Transformer {
 
     }
 
-    public void transforming() {
+    public void transforming(CallBack callBack) {
         svgParser = new SVGParser(svg, dpi);
         Logger.debug(svgParser.toString());
 
@@ -73,7 +78,7 @@ public class Transformer {
                 parseShapeNode(svg.getRootTag(), rootTag, null);
             }
             CodeStyleManager.getInstance(project).reformat(dist);
-            writeXmlToDir(dist);
+            callBack.onComplete(dist);
             Logger.debug(dist.toString());
         }
     }
@@ -164,7 +169,7 @@ public class Transformer {
         return (XmlFile) PsiFileFactory.getInstance(project).createFileFromText(xmlName, StdFileTypes.XML, template);
     }
 
-    private void writeXmlToDir(final XmlFile file) {
+    public void writeXmlToDirAndOpen(XmlFile file) {
         try {
             ApplicationManager.getApplication().invokeLater(new Runnable() {
                 @Override
@@ -193,6 +198,29 @@ public class Transformer {
                                 }
                             }
                             InfoMessage.show(project, "Generating succeeded!");
+                        }
+                    }.execute();
+                }
+            });
+        } catch (Exception e) {
+            Logger.warn("error with async writing.");
+        }
+    }
+
+    public void writeXmlToDir(XmlFile file) {
+        try {
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    new WriteCommandAction(project) {
+                        @Override
+                        protected void run(@NotNull Result result) throws Throwable {
+                            PsiDirectory directory = modulesUtil.getOrCreateDrawableDir(moduleName, getDrawableDirName());
+                            PsiFile psiFile = directory.findFile(xmlName);
+                            if (psiFile == null) {
+                                Logger.warn(xmlName + "is existed, skip it.");
+                                directory.add(file);
+                            }
                         }
                     }.execute();
                 }
@@ -243,5 +271,10 @@ public class Transformer {
         public Transformer create() {
             return transformer;
         }
+    }
+    
+    public interface CallBack{
+
+        void onComplete(XmlFile dist);
     }
 }
