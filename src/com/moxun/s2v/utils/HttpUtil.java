@@ -33,6 +33,6 @@ public class HttpUtil {
     }
 
     public static void main(String args[]) {
-        System.out.println(doGet("https://raw.githubusercontent.com/misakuo/svgtoandroid/master/version.js"));
+        System.out.println(doGet("https://raw.githubusercontent.com/misakuo/svgtoandroid/master/version.json"));
     }
 }

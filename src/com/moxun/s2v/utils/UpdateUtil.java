@@ -18,7 +18,7 @@ import java.awt.*;
  */
 public class UpdateUtil {
     private static int VERSION = Integer.MAX_VALUE;
-    private static final String URL = "https://raw.githubusercontent.com/misakuo/svgtoandroid/master/version.js";
+    private static final String URL = "https://raw.githubusercontent.com/misakuo/svgtoandroid/master/version.json";
 
     public static void checkUpdate(final Project project) {
         if (!Configuration.isAutoCheckUpdate()) {

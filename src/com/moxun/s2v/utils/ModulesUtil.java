@@ -25,7 +25,6 @@ public class ModulesUtil {
     public ModulesUtil(Project project) {
         this.project = project;
         getModules();
-        getCurrentModule();
     }
 
     public Set<String> getModules() {
