@@ -5,15 +5,16 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.xml.XmlFile;
 import com.moxun.s2v.message.ErrorMessage;
+import com.moxun.s2v.message.InfoMessage;
 import com.moxun.s2v.utils.Logger;
 import com.moxun.s2v.utils.ModulesUtil;
 import com.moxun.s2v.utils.MyCellRender;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +22,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.swing.*;
 
 /**
  * Created by moxun on 15/12/14.
@@ -34,14 +37,16 @@ public class GUI {
     private JButton generateButton;
     private JTextField xmlName;
     private JLabel statusBar;
+    private JCheckBox checkBox;
     private JFrame frame;
 
     private Project project;
     private final String DRAWABLE = "drawable";
     private Set<String> distDirList = new HashSet<String>();
     private ModulesUtil modulesUtil;
-
+    private boolean choiceFiles = false;
     private XmlFile svg;
+    private PsiDirectory svgDir;
 
     public GUI(Project project) {
         this.project = project;
@@ -61,6 +66,17 @@ public class GUI {
     }
 
     private void setListener() {
+        checkBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (choiceFiles != checkBox.isSelected()) {
+                    svgPath.setText("");
+                    xmlName.setText("");
+                }
+                choiceFiles = checkBox.isSelected();
+            }
+        });
+
         svgPath.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -111,40 +127,68 @@ public class GUI {
                         Logger.debug("Existing drawable dirs " + modulesUtil.getDrawableDirs(resDir));
                     }
                 }
-
                 if (modulesUtil.isAndroidProject()) {
-                    if (check()) {
-                        new Transformer.Builder()
+                    if (check() && !choiceFiles) {
+                        Transformer transformer = new Transformer.Builder()
                                 .setProject(project)
                                 .setSVG(svg)
                                 .setDpi((String) dpiChooser.getSelectedItem())
                                 .setModule(moduleName)
                                 .setXmlName(xmlName.getText())
-                                .create()
-                                .transforming();
+                                .create();
 
-                        frame.dispose();
+                        transformer.transforming(new Transformer.CallBack() {
+                            @Override
+                            public void onComplete(XmlFile dist) {
+                                transformer.writeXmlToDirAndOpen(dist);
+                            }
+                        });
+                    } else if (check() && choiceFiles) {
+                        for (PsiFile svg : svgDir.getFiles()) {
+                            if (svg != null && !svg.isDirectory() && svg.getName().endsWith(".svg")) {
+                                Transformer transformer = new Transformer.Builder()
+                                        .setProject(project)
+                                        .setSVG((XmlFile) svg)
+                                        .setDpi((String) dpiChooser.getSelectedItem())
+                                        .setModule(moduleName)
+                                        .setXmlName(svg.getName().replace(".svg", ".xml"))
+                                        .create();
+
+                                Transformer.CallBack callBack = new Transformer.CallBack() {
+                                    @Override
+                                    public void onComplete(XmlFile dist) {
+                                        transformer.writeXmlToDir(dist);
+                                    }
+                                };
+                                transformer.transforming(callBack);
+                            }
+                        }
+                        InfoMessage.show(project, "Generating succeeded!");
                     }
+                    frame.dispose();
                 } else {
                     ErrorMessage.show(project, "Current project is not an Android project!");
                     frame.dispose();
                 }
-
             }
         });
     }
 
     private void showSVGChooser() {
-        FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, false, false);
+        FileChooserDescriptor descriptor = new FileChooserDescriptor(!choiceFiles, choiceFiles, false, false, false, false);
         VirtualFile virtualFile = FileChooser.chooseFile(descriptor, project, null);
         if (virtualFile != null) {
             if (!virtualFile.isDirectory() && virtualFile.getName().endsWith("svg")) {
                 svg = (XmlFile) PsiManager.getInstance(project).findFile(virtualFile);
                 //got *.svg file as xml
                 svgPath.setText(virtualFile.getPath());
+                xmlName.setEditable(true);
                 xmlName.setText("vector_drawable_" + getValidName(svg.getName().split("\\.")[0]) + ".xml");
-            } else {
-                ErrorMessage.show(project, "Please choosing a SVG file.");
+            } else if (virtualFile.isDirectory()) {
+                svgDir = PsiManager.getInstance(project).findDirectory(virtualFile);
+                svgPath.setText(virtualFile.getPath());
+                xmlName.setEditable(false);
+                xmlName.setText("keep origin name");
             }
         }
         frame.setAlwaysOnTop(true);
