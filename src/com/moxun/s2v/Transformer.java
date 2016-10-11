@@ -155,7 +155,7 @@ public class Transformer {
                 if (srcTag.getAttribute("fill") != null) {
                     element.setAttribute("android:fillColor", StdColorUtil.formatColor(srcTag.getAttribute("fill").getValue()));
                 } else {
-                    element.setAttribute("android:fillColor", "#00000000");
+                    element.setAttribute("android:fillColor", Configuration.getDefaultTint());
                 }
             }
 

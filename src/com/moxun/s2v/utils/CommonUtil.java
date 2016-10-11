@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by moxun on 16/10/9.
@@ -45,7 +46,7 @@ public class CommonUtil {
     }
 
     public static String formatFloat(float f) {
-        return isInteger(f) ? (int)f + "" : f + "";
+        return isInteger(f) ? (int) f + "" : f + "";
     }
 
     public static String formatString(String s) {
@@ -85,7 +86,19 @@ public class CommonUtil {
                         type));
     }
 
+    public static int parseColor(String colorString) {
+        // Use a long to avoid rollovers on #ffXXXXXX
+        long color = Long.parseLong(colorString.substring(1), 16);
+        if (colorString.length() == 7) {
+            // Set the alpha value
+            color |= 0x00000000ff000000;
+        } else if (colorString.length() != 9) {
+            throw new IllegalArgumentException("Unknown color");
+        }
+        return (int) color;
+    }
+
     private static boolean isInteger(float f) {
-        return f - (int )f == 0;
+        return f - (int) f == 0;
     }
 }

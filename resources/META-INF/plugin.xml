@@ -15,7 +15,7 @@
 
     <change-notes><![CDATA[
       <b>1.5</b><br>
-      Support attr 'fill-rule'; Other improvements<br>
+      Support attr 'fill-rule'; And many improvements, it is highly recommended to upgrade to this version<br>
       <b>1.4.6</b><br>
       Fix crash when no 'transform' attribute on SVG.<br>
       <b>1.4.5</b><br>
