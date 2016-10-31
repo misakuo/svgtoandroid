@@ -2,7 +2,6 @@
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
     <version>1.5</version>
-    <vcode>10</vcode>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -69,7 +68,7 @@
     <actions>
         <!-- Add your actions here -->
         <action class="com.moxun.s2v.S2V" id="moxun.s2v" text="SVG to VectorDrawable"
-                description="Tool for transforming SVG to VectorDrawable" icon="/icons/icon_new.png">
+                description="Tool for transforming SVG to VectorDrawable" icon="/icons/icon.png">
             <add-to-group group-id="MainToolBar" anchor="last"/>
         </action>
         
