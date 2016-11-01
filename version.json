@@ -1,5 +1,5 @@
 {
-  "version": "1.5",
-  "versionCode": 10,
-  "desc": "Support attr 'fill-rule'<br>Add generate mode<br>Other optimization"
+  "version": "1.5.1",
+  "versionCode": 11,
+  "desc": "Fix the 'StringIndexOutOfBoundsException.'"
 }
