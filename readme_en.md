@@ -22,7 +22,7 @@ An plugin to Intellij Platform, using it to convert svg file to android VerctorD
 ####Install  
 This plugin is supporting to Intellij IDEA and Android Studio, need JDK1.6 and higher.    
 #####Installing from jar file
-[Click to download](https://github.com/misakuo/svgtoandroid/raw/master/SVG2VectorDrawable.jar) file `SVG2VectorDrawable.jar` , open `Preferences -> Plugins -> Install plugin from disk...` in IDE, choosing `SVG2VectorDrawable.jar` , you can find plugin's icon in toolbar after restart IDE.  
+[Click to download](https://github.com/misakuo/svgtoandroid/blob/master/svg2android.jar) file `svg2android.jar` , open `Preferences -> Plugins -> Install plugin from disk...` in IDE, choosing `SVG2VectorDrawable.jar` , you can find plugin's icon in toolbar after restart IDE.  
 #####Installing from plugin repo
 Open `Preferences -> Plugins -> Browse Repositories` in IDE, searching `SVG2VectorDrawable`, install and restart IDE.
 ####GUI  
