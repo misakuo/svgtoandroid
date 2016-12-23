@@ -1,13 +1,21 @@
-##SVG2VectorDrawable
+## SVG2VectorDrawable
 [中文](https://github.com/misakuo/svgtoandroid/blob/master/readme.md)
 ***
-###About
-An plugin to Intellij Platform, using it to convert svg file to android VerctorDrawable.  
- 
-###Attributes Contrast
-|SVG Attribute|VectorDrawable Attribute| 
-|:-:|:-:| 
-|id|android:name| 
+### About
+SVG2VectorDrawable,an plugin to Intellij platform,provides an automatic tool to convert svg file to Android VectorDrawable.
+
+### Features
+- Graphical user interface  
+- Parse Android Project and list all Modules  
+- Support the parsing from SVG into VectorDrawable of different dpi  
+- Support SVG transform attribute  
+- Support batch operations of SVG convertion in a specified directory  
+
+### Attributes Contrast
+
+|SVG Attribute|VectorDrawable Attribute|
+|:-:|:-:|
+|id|android:name|
 |fill|android:fillColor|
 |fill-opacity|android:fillAlpha|
 |stroke|android:strokeColor|
@@ -18,21 +26,32 @@ An plugin to Intellij Platform, using it to convert svg file to android VerctorD
 |stroke-linecap|android:lineCap|
 |transform|android:{scaleX/Y \| translateX/Y \| pivotX/Y \| rotation}|
 
-###Useage
-####Install  
-This plugin is supporting to Intellij IDEA and Android Studio, need JDK1.6 and higher.    
-#####Installing from jar file
-[Click to download](https://github.com/misakuo/svgtoandroid/blob/master/svg2android.jar) file `svg2android.jar` , open `Preferences -> Plugins -> Install plugin from disk...` in IDE, choosing `SVG2VectorDrawable.jar` , you can find plugin's icon in toolbar after restart IDE.  
-#####Installing from plugin repo
-Open `Preferences -> Plugins -> Browse Repositories` in IDE, searching `SVG2VectorDrawable`, install and restart IDE.
-####GUI  
+### Useage
+
 ![img1](https://raw.githubusercontent.com/misakuo/svgtoandroid/master/imgs/1.png)
-####useage
-- Click button`···`, choosing a svg file;  
-- choosing module that you want to generating xml in first combobox, choosing dpi in second combobox, if the dpi dir (like `drawable-xxhdpi`) is already exists, the fontcolor in combox is BLACK ,else the fontcolor is GRAY. If choosed dir not exists, plugin will creating the dir;    
-- Inputing file name for xml, default is `vector_drawable_ + ${svgName}.xml`
-- Click`Generate`, plugin will generating xml and open it on editor(if xml file existed before generating,the content will be overwitten)
+
+#### Install  
+This plugin is supporting to Intellij IDEA and Android Studio, need JDK1.6 and higher.    
+##### Installing from jar file
+[Click to download](https://github.com/misakuo/svgtoandroid/raw/master/SVG2VectorDrawable.jar) file `SVG2VectorDrawable.jar` , open `Preferences -> Plugins -> Install plugin from disk...` in IDE, choosing `SVG2VectorDrawable.jar` , you can find plugin's icon in toolbar after restart IDE.  
+
+##### Installing from plugin repo
+In IDE,open `Preferences -> Plugins -> Browse Repositories`, search `SVG2VectorDrawable`,install and restart IDE.
+
+#### Under GUI  
+
+![settings](./imgs/single_file.png)
+
+- Click... and select SVG source file or selec batch and select a directory with SVG files in it
+- Choose module from which you want to generate XML file in the first combobox. if the dpi dir (like `drawable-xxhdpi`) is already exists, the fontcolor in combox is BLACK ,else the fontcolor is GRAY. If choosed dir not exists, plugin will creating the dir
+- Choose DPI for VectorDrawable to be generated in the second combobox
+- Fill the name of the xml to be generated and file name is `{vector_drawable+SVG_NAME}` by default  
+- Click`Generate`and this plugin will create VectorDrawabble and open it in an editor(if xml file existed before generating,the content will be overwitten)
+
+#### Under Generate
+![settings](./imgs/generate.png)  
+Call Generate Menu in any main code editor. Example, `control+enter` in macOS
+.This plugin will convert SVG file under specified directory into drawable directory of current module skipping files with the same name.
 
 ***
 Welcome to commit issue & PR :)
-
