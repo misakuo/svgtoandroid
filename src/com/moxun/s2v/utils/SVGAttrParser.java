@@ -97,12 +97,23 @@ public class SVGAttrParser {
         }
     }
 
-    private static int getValue(XmlTag tag,String key) {
-        return tag.getAttributeValue(key) == null ? 0 : Integer.valueOf(tag.getAttributeValue(key));
+    private static int getValue(XmlTag tag, String key) {
+        String attrValue = tag.getAttributeValue(key);
+        double value = safeGetValue(attrValue);
+        return (int) Math.round(value);
     }
 
-    private static double getValueF(XmlTag tag,String key) {
-        return tag.getAttributeValue(key) == null ? 0.0 : Double.valueOf(tag.getAttributeValue(key));
+    private static double getValueF(XmlTag tag, String key) {
+        String attrValue = tag.getAttributeValue(key);
+        return safeGetValue(attrValue);
+    }
+
+    private static double safeGetValue(String valueString) {
+        if (valueString == null || valueString.isEmpty()) {
+            return 0;
+        } else {
+            return Double.valueOf(valueString);
+        }
     }
 
     public static void main(String[] args) {
@@ -111,5 +122,11 @@ public class SVGAttrParser {
         System.out.println(ellipseToPath(20, 16, 20, 16));
         System.out.println(circleToPath(16.852, 7.376, 5));
         System.out.println(rectToPath(10,10,100,100,15,15));
+
+        System.out.println(safeGetValue(null));
+        System.out.println(safeGetValue(""));
+        System.out.println(safeGetValue("1"));
+        System.out.println(Math.round(safeGetValue("1.1")));
+        System.out.println(Math.round(safeGetValue("1.51")));
     }
 }
