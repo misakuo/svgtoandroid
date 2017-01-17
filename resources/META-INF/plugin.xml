@@ -1,8 +1,8 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.5.1</version>
-    <vcode>11</vcode>
+    <version>1.5.2</version>
+    <vcode>12</vcode>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -14,6 +14,8 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>1.5.2</b><br>
+      Fix the NumberFormatException.<br>
       <b>1.5.1</b><br>
       Fix the StringIndexOutOfBoundsException.<br>
       <b>1.5</b><br>
