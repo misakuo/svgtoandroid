@@ -1,5 +1,5 @@
 {
-  "version": "1.5.1",
-  "versionCode": 11,
-  "desc": "Fix the 'StringIndexOutOfBoundsException.'"
+  "version": "1.5.2",
+  "versionCode": 12,
+  "desc": "Fix the 'NumberFormatException.'"
 }
