@@ -15,17 +15,13 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.moxun.s2v.message.InfoMessage;
 import com.moxun.s2v.utils.*;
 
 import java.util.*;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by moxun on 15/12/14.
@@ -39,6 +35,7 @@ public class Transformer {
     private String xmlName;
     private PsiDirectory distDir;
     private SVGParser svgParser;
+    private StyleParser styleParser;
 
     private Transformer() {
 
@@ -46,6 +43,8 @@ public class Transformer {
 
     public void transforming(CallBack callBack) {
         svgParser = new SVGParser(svg, dpi);
+        styleParser = new StyleParser(svgParser.getStyles());
+
         Logger.debug(svgParser.toString());
 
         XmlFile dist = getDistXml();
@@ -151,13 +150,13 @@ public class Transformer {
                 }
             }
 
-            if (element.getAttribute("android:fillColor") == null) {
-                if (srcTag.getAttribute("fill") != null) {
-                    element.setAttribute("android:fillColor", StdColorUtil.formatColor(srcTag.getAttribute("fill").getValue()));
-                } else {
-                    element.setAttribute("android:fillColor", Configuration.getDefaultTint());
-                }
+            XmlAttribute id = child.getAttribute("class");
+            String idValue = id == null ? null : id.getValue();
+            if (idValue != null) {
+                element.setAttribute("android:name", idValue);
             }
+
+            element.setAttribute("android:fillColor", decideFillColor(srcTag, child));
 
             distTag.addSubTag(element, false);
         }
@@ -257,9 +256,32 @@ public class Transformer {
             return transformer;
         }
     }
-    
-    public interface CallBack{
+
+    public interface CallBack {
 
         void onComplete(XmlFile dist);
+    }
+
+    //Priority: style > self > parent
+    private String decideFillColor(XmlTag group, XmlTag self) {
+        String result = Configuration.getDefaultTint();
+
+        XmlAttribute groupFill;
+        if ((groupFill = group.getAttribute("fill")) != null) {
+            result = StdColorUtil.formatColor(groupFill.getValue());
+        }
+
+        XmlAttribute selfFill;
+        if ((selfFill = self.getAttribute("fill")) != null) {
+            result = StdColorUtil.formatColor(selfFill.getValue());
+        }
+
+        XmlAttribute id = self.getAttribute("class");
+        String colorFromStyle;
+        if (id != null && id.getValue() != null && (colorFromStyle = styleParser.getFillColor(id.getValue())) != null) {
+            result = colorFromStyle;
+        }
+
+        return result;
     }
 }

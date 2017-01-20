@@ -130,6 +130,20 @@ public class SVGParser {
         return childes;
     }
 
+    public XmlTag getStyles() {
+        List<XmlTag> childes = getSVGChildes();
+        for (XmlTag tag : childes) {
+            if ("defs".equals(tag.getName()) && tag.getSubTags() != null) {
+                for (XmlTag subTag : tag.getSubTags()) {
+                    if ("style".equals(subTag.getName())) {
+                        return subTag;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public List<XmlTag> getShapeTags(XmlTag parentTag) {
         List<XmlTag> tags = new ArrayList<XmlTag>();
         XmlTag[] subTags = parentTag.getSubTags();

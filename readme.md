@@ -36,7 +36,7 @@ Intellij Platform插件，通过其可以完成从svg文件到Android VectorDraw
 #### 安装  
 本插件支持Intellij IDEA和Android Studio，需要JDK版本1.6+  
 ##### 通过本地jar文件安装
-[从此处](https://github.com/misakuo/svgtoandroid/blob/master/svg2android.jar) 下载`svg2android.jar` 文件，在IDE中打开 Preferences -> Plugins -> Install plugin from disk... 选择 SVG2VectorDrawable.jar ，添加后重启IDE
+[从此处](https://github.com/misakuo/svgtoandroid/blob/master/svg2android.zip) 下载`svg2android.zip` 文件，在IDE中打开 Preferences -> Plugins -> Install plugin from disk... 选择 svg2android.zip ，添加后重启IDE
 ##### 通过插件仓库在线安装
 在IDE中打开Preferences -> Plugins -> Browse Repositories，搜索SVG2VectorDrawable，安装插件并重启IDE
 #### 界面  

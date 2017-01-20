@@ -1,5 +1,5 @@
 {
-  "version": "1.5.2",
-  "versionCode": 12,
-  "desc": "Fix the 'NumberFormatException.'"
+  "version": "1.6",
+  "versionCode": 13,
+  "desc": "Supports SVG with CSS styles;\n Improve conversion accuracy."
 }

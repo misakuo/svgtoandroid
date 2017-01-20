@@ -34,7 +34,7 @@ SVG2VectorDrawable, an plugin to Intellij platform, provides an automatic tool t
 This plugin is supporting to Intellij IDEA and Android Studio, need JDK1.6 and higher.    
 
 ##### Installing from jar file
-[Click to download](https://github.com/misakuo/svgtoandroid/raw/master/SVG2VectorDrawable.jar) file `SVG2VectorDrawable.jar`, open `Preferences -> Plugins -> Install plugin from disk...` in IDE, choosing `SVG2VectorDrawable.jar`, you can find plugin's icon in toolbar after restart IDE.   
+[Click to download](https://github.com/misakuo/svgtoandroid/raw/master/svg2android.zip) file `svg2android.zip`, open `Preferences -> Plugins -> Install plugin from disk...` in IDE, choosing `svg2android.zip`, you can find plugin's icon in toolbar after restart IDE.   
 
 ##### Installing from plugin repo
 In IDE,open `Preferences -> Plugins -> Browse Repositories`, search `SVG2VectorDrawable`, install and restart IDE.

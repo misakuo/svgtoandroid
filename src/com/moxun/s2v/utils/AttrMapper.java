@@ -2,9 +2,7 @@ package com.moxun.s2v.utils;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /**
  * http://developer.android.com/reference/android/graphics/drawable/VectorDrawable.html
@@ -12,6 +10,7 @@ import java.util.Map;
  */
 public class AttrMapper {
     private static Map<String, String> mapper = new HashMap<String, String>();
+    private static List<String> ignoreAttrs = new ArrayList<String>();
 
     static {
         mapper.clear();
@@ -25,6 +24,11 @@ public class AttrMapper {
         mapper.put("stroke-linejoin", "android:strokeLineJoin");
         mapper.put("stroke-miterlimit", "android:strokeMiterLimit");
         mapper.put("stroke-linecap", "android:strokeLineCap");
+
+        ignoreAttrs.clear();
+        ignoreAttrs.add("transform");
+        ignoreAttrs.add("d");
+        ignoreAttrs.add("class");
     }
 
     public static boolean isShapeName(String name) {
@@ -43,7 +47,7 @@ public class AttrMapper {
     }
 
     public static String getAttrName(String svgAttrName) {
-        if (!mapper.containsKey(svgAttrName) && !svgAttrName.equals("transform")) {
+        if (!mapper.containsKey(svgAttrName) && !ignoreAttrs.contains(svgAttrName)) {
             Logger.warn("Skipping attr [" + svgAttrName + "], because it not supported by Android.");
         }
         return mapper.get(svgAttrName);
