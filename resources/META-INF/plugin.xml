@@ -1,8 +1,8 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.6</version>
-    <vcode>13</vcode>
+    <version>1.6.1</version>
+    <vcode>14</vcode>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -14,8 +14,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>1.6.1</b><br>
+      Better support for polygon parsing.<br>
       <b>1.6</b><br>
-      Supports SVG with CSS styles; Improve conversion accuracy.
+      Supports SVG with CSS styles; Improve conversion accuracy.<br>
       <b>1.5.2</b><br>
       Fix the NumberFormatException.<br>
       <b>1.5.1</b><br>

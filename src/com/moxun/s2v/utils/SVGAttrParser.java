@@ -38,9 +38,21 @@ public class SVGAttrParser {
     }
 
     public static String polygonToPath(String points) {
-        String r = "M" + points.trim().replaceAll("\\s+", "L");
+        String[] temp = points.split("\\s+");
+        if (temp != null && temp.length > 0 && temp.length % 2 == 0) {
+            String result = "";
+            for (int i = 0; i < temp.length; i++) {
+                if (i % 2 == 0){
+                   result = result + " " + temp[i];
+                } else {
+                    result = result + "," + temp[i];
+                }
+            }
+            points = result;
+        }
+        String r = "M" + points.trim().replaceAll("\\s+", " L");
         if (Pattern.compile("[L$]").matcher(r).find()) {
-            r = r.substring(0, r.length() - 1);
+            r = r.substring(0, r.length());
         }
         r += "z";
         return r;
@@ -62,7 +74,7 @@ public class SVGAttrParser {
     private static String toFixed(double d) {
         String formatted = String.format("%.2f", d);
         if (formatted.endsWith(".00")) {
-            formatted = formatted.replace(".00","");
+            formatted = formatted.replace(".00", "");
         }
         return formatted;
     }
@@ -122,6 +134,7 @@ public class SVGAttrParser {
 
     public static void main(String[] args) {
         //test case
+        System.out.println(polygonToPath("0 0 0 100 100 100 100 0 0 0"));
         System.out.println(polygonToPath(" 60,20  100,40 100,80 60,100 20,80 20,40 "));
         System.out.println(ellipseToPath(20, 16, 20, 16));
         System.out.println(circleToPath(16.852, 7.376, 5));

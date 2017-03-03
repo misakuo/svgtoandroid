@@ -1,5 +1,5 @@
 {
-  "version": "1.6",
-  "versionCode": 13,
-  "desc": "Supports SVG with CSS styles;\n Improve conversion accuracy;\n And Happy Chinese New Year~"
+  "version": "1.7",
+  "versionCode": 14,
+  "desc": "Better support for polygon parsing."
 }
