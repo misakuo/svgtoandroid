@@ -1,5 +1,5 @@
 {
-  "version": "1.7",
-  "versionCode": 14,
-  "desc": "Better support for polygon parsing."
+  "version": "1.6.2",
+  "versionCode": 15,
+  "desc": "Add the missing library 'org.w3c.css.sac' on Android Studio.\nInsert 'pathData' attribute at the end of all attributes."
 }

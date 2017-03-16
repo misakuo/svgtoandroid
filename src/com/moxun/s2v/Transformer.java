@@ -75,39 +75,39 @@ public class Transformer {
                 Logger.warn("Root tag has no subTag named 'group'");
                 parseShapeNode(svg.getRootTag(), rootTag, null);
             }
-            CodeStyleManager.getInstance(project).reformat(dist);
+            CodeStyleManager.getInstance(project).reformat(dist, true);
             callBack.onComplete(dist);
             Logger.debug(dist.toString());
         }
     }
 
     private void parseGroup(XmlTag svgTag, XmlTag target) {
-        XmlTag group = target.createChildTag("group", target.getNamespace(), null, false);
+        XmlTag groupElement = target.createChildTag("group", target.getNamespace(), null, false);
         //set group's attrs
         Map<String, String> svgGroupAttrs = svgParser.getChildAttrs(svgTag);
         List<String> acceptedAttrs = Arrays.asList("id", "transform");
 
         for (String key : svgGroupAttrs.keySet()) {
             if (AttrMapper.getAttrName(key) != null && acceptedAttrs.contains(key)) {
-                group.setAttribute(AttrMapper.getAttrName(key), svgGroupAttrs.get(key));
+                groupElement.setAttribute(AttrMapper.getAttrName(key), svgGroupAttrs.get(key));
             }
         }
 
         if (svgGroupAttrs.keySet().contains("transform")) {
             Map<String, String> trans = AttrMapper.getTranslateAttrs(svgGroupAttrs.get("transform"));
             for (String key : trans.keySet()) {
-                group.setAttribute(key, CommonUtil.formatString(trans.get(key)));
+                groupElement.setAttribute(key, CommonUtil.formatString(trans.get(key)));
             }
         }
 
         //add child tags
         //<g> was processed.
-        processSubGroups(svgTag, group);
+        processSubGroups(svgTag, groupElement);
 
         svgGroupAttrs.remove("id");
         svgGroupAttrs.remove("transform");
-        parseShapeNode(svgTag, group, svgGroupAttrs);
-        target.addSubTag(group, false);
+        parseShapeNode(svgTag, groupElement, svgGroupAttrs);
+        target.addSubTag(groupElement, false);
     }
 
     private void processSubGroups(XmlTag svgTag, XmlTag parent) {
@@ -125,40 +125,40 @@ public class Transformer {
         }
         List<XmlTag> childes = svgParser.getShapeTags(srcTag);
         for (XmlTag child : childes) {
-            XmlTag element = distTag.createChildTag("path", distTag.getNamespace(), null, false);
+            XmlTag pathElement = distTag.createChildTag("path", distTag.getNamespace(), null, false);
             existedAttrs.putAll(svgParser.getChildAttrs(child));
             Logger.debug("Existed attrs: " + existedAttrs);
-
-            for (String key : existedAttrs.keySet()) {
-                if (AttrMapper.getAttrName(key) != null && AttrMapper.getAttrName(key).contains("Color")) {
-                    element.setAttribute(AttrMapper.getAttrName(key), StdColorUtil.formatColor(existedAttrs.get(key)));
-                } else if (AttrMapper.getAttrName(key) != null) {
-                    if (AttrMapper.getAttrName(key).equals("android:fillType")) {
-                        String value = existedAttrs.get(key).toLowerCase();
-                        String xmlValue = "nonZero";
-                        if (value.equals("evenodd")) {
-                            xmlValue = "evenOdd";
-                        }
-                        element.setAttribute("android:fillType", xmlValue);
-                    } else {
-                        element.setAttribute(AttrMapper.getAttrName(key), existedAttrs.get(key));
-                    }
-                }
-
-                if (AttrMapper.isShapeName(child.getName())) {
-                    element.setAttribute("android:pathData", SVGAttrParser.getPathData(child));
-                }
-            }
 
             XmlAttribute id = child.getAttribute("class");
             String idValue = id == null ? null : id.getValue();
             if (idValue != null) {
-                element.setAttribute("android:name", idValue);
+                pathElement.setAttribute("android:name", idValue);
             }
 
-            element.setAttribute("android:fillColor", decideFillColor(srcTag, child));
+            pathElement.setAttribute("android:fillColor", decideFillColor(srcTag, child));
 
-            distTag.addSubTag(element, false);
+            for (String svgElementAttribute : existedAttrs.keySet()) {
+                if (AttrMapper.getAttrName(svgElementAttribute) != null && AttrMapper.getAttrName(svgElementAttribute).contains("Color")) {
+                    pathElement.setAttribute(AttrMapper.getAttrName(svgElementAttribute), StdColorUtil.formatColor(existedAttrs.get(svgElementAttribute)));
+                } else if (AttrMapper.getAttrName(svgElementAttribute) != null) {
+                    if (AttrMapper.getAttrName(svgElementAttribute).equals("android:fillType")) {
+                        String value = existedAttrs.get(svgElementAttribute).toLowerCase();
+                        String xmlValue = "nonZero";
+                        if (value.equals("evenodd")) {
+                            xmlValue = "evenOdd";
+                        }
+                        pathElement.setAttribute("android:fillType", xmlValue);
+                    } else {
+                        pathElement.setAttribute(AttrMapper.getAttrName(svgElementAttribute), existedAttrs.get(svgElementAttribute));
+                    }
+                }
+            }
+
+            if (AttrMapper.isShapeName(child.getName())) {
+                pathElement.setAttribute("android:pathData", SVGAttrParser.getPathData(child));
+            }
+
+            distTag.addSubTag(pathElement, false);
         }
     }
 

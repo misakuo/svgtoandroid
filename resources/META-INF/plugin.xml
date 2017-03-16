@@ -1,8 +1,8 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.6.1</version>
-    <vcode>14</vcode>
+    <version>1.6.2</version>
+    <vcode>15</vcode>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -14,6 +14,9 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>1.6.2</b><br>
+      Add the missing library 'org.w3c.css.sac' on Android Studio.<br>
+      Insert 'pathData' attribute at the end of all attributes.<br>
       <b>1.6.1</b><br>
       Better support for polygon parsing.<br>
       <b>1.6</b><br>
