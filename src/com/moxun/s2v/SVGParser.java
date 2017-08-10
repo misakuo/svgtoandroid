@@ -156,6 +156,40 @@ public class SVGParser {
         return tags;
     }
 
+    public List<XmlTag> getUseTags(XmlTag parentTag) {
+        List<XmlTag> tags = new ArrayList<XmlTag>();
+        XmlTag[] subTags = parentTag.getSubTags();
+        for (XmlTag tag : subTags) {
+            if ("use".equalsIgnoreCase(tag.getName())) {
+                tags.add(tag);
+            }
+        }
+        Logger.debug("use tags of " + parentTag.getName() + " :" + tags.toString());
+        return tags;
+    }
+
+    public Map<String, XmlTag> getAcceptedDefNodes() {
+        XmlTag rootTag = svg.getRootTag();
+        Map<String, XmlTag> tags = new HashMap<String, XmlTag>();
+        XmlTag[] subTags = rootTag.getSubTags();
+        for (XmlTag tag : subTags) {
+            if ("defs".equalsIgnoreCase(tag.getName())) {
+                XmlTag[] defSubTags = tag.getSubTags();
+                if (defSubTags != null) {
+                    for (XmlTag defNode : defSubTags) {
+                        if (AttrMapper.isShapeName(defNode.getName())) {
+                            tags.put(defNode.getAttributeValue("id"), defNode);
+                        } else {
+                            Logger.info("Tag <" + tag.getName() + "> was not supported by android");
+                        }
+                    }
+                }
+            }
+        }
+        Logger.debug("use tags of " + rootTag.getName() + " :" + tags.toString());
+        return tags;
+    }
+
     public boolean hasGroupTag() {
         return getGroups().size() > 0;
     }

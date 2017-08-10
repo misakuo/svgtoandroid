@@ -124,10 +124,29 @@ public class Transformer {
             existedAttrs = new HashMap<String, String>();
         }
         List<XmlTag> childes = svgParser.getShapeTags(srcTag);
+
+        List<XmlTag> useTags = svgParser.getUseTags(srcTag);
+        Map<String, XmlTag> defsTags = svgParser.getAcceptedDefNodes();
+        for (XmlTag useTag : useTags) {
+            String href = useTag.getAttributeValue("xlink:href");
+            XmlTag def = defsTags.get(href.replace("#", ""));
+            if (def != null) {
+                XmlTag clonedTag = (XmlTag) def.copy();
+                for (XmlAttribute attribute : useTag.getAttributes()) {
+                    if (!"xlink:href".equalsIgnoreCase(attribute.getName())) {
+                        clonedTag.setAttribute(attribute.getName(), attribute.getValue());
+                    }
+                }
+                childes.add(clonedTag);
+            }
+        }
+
         for (XmlTag child : childes) {
             XmlTag pathElement = distTag.createChildTag("path", distTag.getNamespace(), null, false);
-            existedAttrs.putAll(svgParser.getChildAttrs(child));
-            Logger.debug("Existed attrs: " + existedAttrs);
+            Map<String, String> myAttrs = new HashMap<String, String>();
+            myAttrs.putAll(existedAttrs);
+            myAttrs.putAll(svgParser.getChildAttrs(child));
+            Logger.debug("Existed attrs: " + myAttrs);
 
             XmlAttribute id = child.getAttribute("class");
             String idValue = id == null ? null : id.getValue();
@@ -137,19 +156,19 @@ public class Transformer {
 
             pathElement.setAttribute("android:fillColor", decideFillColor(srcTag, child));
 
-            for (String svgElementAttribute : existedAttrs.keySet()) {
+            for (String svgElementAttribute : myAttrs.keySet()) {
                 if (AttrMapper.getAttrName(svgElementAttribute) != null && AttrMapper.getAttrName(svgElementAttribute).contains("Color")) {
-                    pathElement.setAttribute(AttrMapper.getAttrName(svgElementAttribute), StdColorUtil.formatColor(existedAttrs.get(svgElementAttribute)));
+                    pathElement.setAttribute(AttrMapper.getAttrName(svgElementAttribute), StdColorUtil.formatColor(myAttrs.get(svgElementAttribute)));
                 } else if (AttrMapper.getAttrName(svgElementAttribute) != null) {
                     if (AttrMapper.getAttrName(svgElementAttribute).equals("android:fillType")) {
-                        String value = existedAttrs.get(svgElementAttribute).toLowerCase();
+                        String value = myAttrs.get(svgElementAttribute).toLowerCase();
                         String xmlValue = "nonZero";
                         if (value.equals("evenodd")) {
                             xmlValue = "evenOdd";
                         }
                         pathElement.setAttribute("android:fillType", xmlValue);
                     } else {
-                        pathElement.setAttribute(AttrMapper.getAttrName(svgElementAttribute), existedAttrs.get(svgElementAttribute));
+                        pathElement.setAttribute(AttrMapper.getAttrName(svgElementAttribute), myAttrs.get(svgElementAttribute));
                     }
                 }
             }
