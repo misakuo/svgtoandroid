@@ -131,12 +131,6 @@ public class SVGAttrParser {
 
     public static void main(String[] args) {
         //test case
-        System.out.println(polygonToPath("0 0 0 100 100 100 100 0 0 0"));
-        System.out.println(polygonToPath(" 60,20  100,40 100,80 60,100 20,80 20,40 "));
-        System.out.println(ellipseToPath(20, 16, 20, 16));
-        System.out.println(circleToPath(16.852, 7.376, 5));
-        System.out.println(rectToPath(10, 10.5, 100, 100, 15, 15));
-
         System.out.println(safeGetValue(null));
         System.out.println(safeGetValue(""));
         System.out.println(safeGetValue("1"));
