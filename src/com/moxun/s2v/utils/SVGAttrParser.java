@@ -3,6 +3,7 @@ package com.moxun.s2v.utils;
 import com.intellij.psi.xml.XmlTag;
 
 import java.util.regex.Pattern;
+import java.util.Locale;
 
 /**
  * Created by moxun on 15/12/16.
@@ -72,11 +73,7 @@ public class SVGAttrParser {
     }
 
     private static String toFixed(double d) {
-        String formatted = String.format("%.2f", d);
-        if (formatted.endsWith(".00")) {
-            formatted = formatted.replace(".00", "");
-        }
-        return formatted;
+        return String.format(Locale.ROOT, "%.2f", d).replaceAll("\\.00$", "");
     }
 
     public static String getPathData(XmlTag tag) {
@@ -138,7 +135,7 @@ public class SVGAttrParser {
         System.out.println(polygonToPath(" 60,20  100,40 100,80 60,100 20,80 20,40 "));
         System.out.println(ellipseToPath(20, 16, 20, 16));
         System.out.println(circleToPath(16.852, 7.376, 5));
-        System.out.println(rectToPath(10, 10, 100, 100, 15, 15));
+        System.out.println(rectToPath(10, 10.5, 100, 100, 15, 15));
 
         System.out.println(safeGetValue(null));
         System.out.println(safeGetValue(""));
