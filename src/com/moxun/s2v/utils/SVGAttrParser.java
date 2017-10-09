@@ -21,8 +21,7 @@ public class SVGAttrParser {
             double y0 = y, y1 = y + ry, y2 = y + height - ry, y3 = y + height;
 
             return new SVGPathBuilder()
-                    .moveto(x1, y0)
-                    .lineto(x2, y0).quadto(x3, y0, x3, y1)
+                    .moveto(x2, y0).quadto(x3, y0, x3, y1)
                     .lineto(x3, y2).quadto(x3, y3, x2, y3)
                     .lineto(x1, y3).quadto(x0, y3, x0, y2)
                     .lineto(x0, y1).quadto(x0, y0, x1, y0)
