@@ -1,50 +1,52 @@
 package com.moxun.s2v.utils;
 
 import com.intellij.psi.xml.XmlTag;
-
 import java.util.regex.Pattern;
-import java.util.Locale;
 
 /**
  * Created by moxun on 15/12/16.
  */
 public class SVGAttrParser {
     public static String rectToPath(double x, double y, double width, double height, double rx, double ry) {
-        StringBuilder sb = new StringBuilder();
         if (rx == 0 && ry == 0) {
-            sb.append("M").append(x).append(",").append(y).append("L").append(toFixed(x + width))
-                    .append(",").append(toFixed(y)).append("L").append(toFixed(x + width)).append(",")
-                    .append(toFixed(y + height)).append("L").append(toFixed(x)).append(",").append(toFixed(y + height))
-                    .append("z");
+            return new SVGPathBuilder()
+                    .moveto(x, y)
+                    .lineto(x + width, y)
+                    .lineto(x + width, y + height)
+                    .lineto(x, y + height)
+                    .closepath()
+                    .build();
         } else {
-            sb.append("M").append(toFixed(x + rx)).append(",").append(toFixed(y)).append(",")
-                    .append("L").append(toFixed(x + width - rx)).append(",").append(toFixed(y)).append(",")
-                    .append("Q").append(toFixed(x + width)).append(",").append(toFixed(y)).append(",").append(toFixed(x + width)).append(",").append(toFixed(y + ry)).append(",")
-                    .append("L").append(toFixed(x + width)).append(",").append(toFixed(y + height - ry)).append(",")
-                    .append("Q").append(toFixed(x + width)).append(",").append(toFixed(y + height)).append(",").append(toFixed(x + width - rx)).append(",").append(toFixed(y + height)).append(",")
-                    .append("L").append(toFixed(x + rx)).append(",").append(toFixed(y + height)).append(",")
-                    .append("Q").append(toFixed(x)).append(",").append(toFixed(y + height)).append(",").append(toFixed(x)).append(",").append(toFixed(y + height - ry)).append(",")
-                    .append("L").append(toFixed(x)).append(",").append(toFixed(y + ry)).append(",")
-                    .append("Q").append(toFixed(x)).append(",").append(toFixed(y)).append(",").append(toFixed(x + rx)).append(",").append(toFixed(y)).append("z");
+            double x0 = x, x1 = x + rx, x2 = x + width - rx, x3 = x + width;
+            double y0 = y, y1 = y + ry, y2 = y + height - ry, y3 = y + height;
+
+            return new SVGPathBuilder()
+                    .moveto(x1, y0)
+                    .lineto(x2, y0).quadto(x3, y0, x3, y1)
+                    .lineto(x3, y2).quadto(x3, y3, x2, y3)
+                    .lineto(x1, y3).quadto(x0, y3, x0, y2)
+                    .lineto(x0, y1).quadto(x0, y0, x1, y0)
+                    .closepath()
+                    .build();
         }
-        return sb.toString().replaceAll("\\.0,", ",");
     }
 
     public static String circleToPath(double cx, double cy, double r) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("M").append(toFixed(cx - r)).append(",").append(toFixed(cy)).append("a").append(toFixed(r)).append(",").append(toFixed(r))
-                .append(" 0 0,1 ").append(toFixed(r * 2)).append(",0").append("a").append(toFixed(r)).append(",").append(toFixed(r))
-                .append(" 0 0,1 -").append(toFixed(r * 2)).append(",0z");
-        return sb.toString().replaceAll("\\.0,", ",");
+        return new SVGPathBuilder()
+                .moveto(cx - r, cy)
+                .arcrel(r, r, 0, false, true, 2 * r, 0)
+                .arcrel(r, r, 0, false, true, -2 * r, 0)
+                .closepath()
+                .build();
     }
 
     public static String polygonToPath(String points) {
         String[] temp = points.split("\\s+");
-        if (temp != null && temp.length > 0 && temp.length % 2 == 0) {
+        if (temp.length > 0 && temp.length % 2 == 0) {
             String result = "";
             for (int i = 0; i < temp.length; i++) {
-                if (i % 2 == 0){
-                   result = result + " " + temp[i];
+                if (i % 2 == 0) {
+                    result = result + " " + temp[i];
                 } else {
                     result = result + "," + temp[i];
                 }
@@ -63,17 +65,14 @@ public class SVGAttrParser {
         double ctlX = rx * 0.5522847498307935;
         double ctlY = ry * 0.5522847498307935;
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("M").append(toFixed(cx)).append(",").append(toFixed(cy - ry)).append(",")
-                .append("C").append(toFixed(cx + ctlX)).append(",").append(toFixed(cy - ry)).append(",").append(toFixed(cx + rx)).append(",").append(toFixed(cy - ctlY)).append(",").append(toFixed(cx + rx)).append(",").append(toFixed(cy)).append(",")
-                .append("C").append(toFixed(cx + rx)).append(",").append(toFixed(cy + ctlY)).append(",").append(toFixed(cx + ctlX)).append(",").append(toFixed(cy + ry)).append(",").append(toFixed(cx)).append(",").append(toFixed(cy + ry)).append(",")
-                .append("C").append(toFixed(cx - ctlX)).append(",").append(toFixed(cy + ry)).append(",").append(toFixed(cx - rx)).append(",").append(toFixed(cy + ctlY)).append(",").append(toFixed(cx - rx)).append(",").append(toFixed(cy)).append(",")
-                .append("C").append(toFixed(cx - rx)).append(",").append(toFixed(cy - ctlY)).append(",").append(toFixed(cx - ctlX)).append(",").append(toFixed(cy - ry)).append(",").append(toFixed(cx)).append(",").append(toFixed(cy - ry)).append("z");
-        return sb.toString().replaceAll("\\.0,", ",");
-    }
-
-    private static String toFixed(double d) {
-        return String.format(Locale.ROOT, "%.2f", d).replaceAll("\\.00$", "");
+        return new SVGPathBuilder()
+                .moveto(cx, cy - ry)
+                .cubicto(cx + ctlX, cy - ry, cx + rx, cy - ctlY, cx + rx, cy)
+                .cubicto(cx + rx, cy + ctlY, cx + ctlX, cy + ry, cx, cy + ry)
+                .cubicto(cx - ctlX, cy + ry, cx - rx, cy + ctlY, cx - rx, cy)
+                .cubicto(cx - rx, cy - ctlY, cx - ctlX, cy - ry, cx, cy - ry)
+                .closepath()
+                .build();
     }
 
     public static String getPathData(XmlTag tag) {
