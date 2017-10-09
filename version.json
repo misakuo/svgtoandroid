@@ -1,5 +1,5 @@
 {
-  "version": "1.7",
-  "versionCode": 16,
-  "desc": "Support the <use> and <defs> tags.\nSupport the 'opacity' attribute."
+  "version": "1.7.1",
+  "versionCode": 17,
+  "desc": "Make XML generation locale-independent."
 }
