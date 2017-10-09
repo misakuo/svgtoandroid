@@ -1,7 +1,6 @@
 package com.moxun.s2v.utils;
 
 import com.intellij.psi.xml.XmlTag;
-import java.util.regex.Pattern;
 
 /**
  * Created by moxun on 15/12/16.
@@ -40,24 +39,18 @@ public class SVGAttrParser {
     }
 
     public static String polygonToPath(String points) {
-        String[] temp = points.split("\\s+");
-        if (temp.length > 0 && temp.length % 2 == 0) {
-            String result = "";
-            for (int i = 0; i < temp.length; i++) {
-                if (i % 2 == 0) {
-                    result = result + " " + temp[i];
-                } else {
-                    result = result + "," + temp[i];
-                }
+        SVGPathBuilder path = new SVGPathBuilder();
+        String[] nums = points.replaceAll("[^-+0-9.e]+", " ").trim().split(" ");
+        for (int i = 0; i + 1 < nums.length; i += 2) {
+            double x = Double.parseDouble(nums[i]);
+            double y = Double.parseDouble(nums[i + 1]);
+            if (i == 0) {
+                path.moveto(x, y);
+            } else {
+                path.lineto(x, y);
             }
-            points = result;
         }
-        String r = "M" + points.trim().replaceAll("\\s+", " L");
-        if (Pattern.compile("[L$]").matcher(r).find()) {
-            r = r.substring(0, r.length());
-        }
-        r += "z";
-        return r;
+        return path.closepath().build();
     }
 
     public static String ellipseToPath(double cx, double cy, double rx, double ry) {

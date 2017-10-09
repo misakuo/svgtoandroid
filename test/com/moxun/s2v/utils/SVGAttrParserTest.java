@@ -32,13 +32,13 @@ public class SVGAttrParserTest {
     @Test
     public void polygonToPath() {
         assertThat(SVGAttrParser.polygonToPath("0 0 0 100 100 100 100 0 0 0"),
-                is("M0,0 L0,100 L100,100 L100,0 L0,0z"));
+                is("M 0,0 L 0,100 L 100,100 L 100,0 L 0,0 z"));
 
         assertThat(SVGAttrParser.polygonToPath(" 60,20  100,40 100,80 60,100 20,80 20,40 "),
-                is("M60,20 L100,40 L100,80 L60,100 L20,80 L20,40z"));
+                is("M 60,20 L 100,40 L 100,80 L 60,100 L 20,80 L 20,40 z"));
 
         assertThat(SVGAttrParser.polygonToPath("0 0 1,1"),
-                is("M0 L0 L1,1z")); // FIXME: must be "M 0,0 L 1,1 z".
+                is("M 0,0 L 1,1 z"));
     }
 
     @Test
