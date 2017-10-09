@@ -36,6 +36,9 @@ public class SVGAttrParserTest {
 
         assertThat(SVGAttrParser.polygonToPath(" 60,20  100,40 100,80 60,100 20,80 20,40 "),
                 is("M60,20 L100,40 L100,80 L60,100 L20,80 L20,40z"));
+
+        assertThat(SVGAttrParser.polygonToPath("0 0 1,1"),
+                is("M0 L0 L1,1z")); // FIXME: must be "M 0,0 L 1,1 z".
     }
 
     @Test
