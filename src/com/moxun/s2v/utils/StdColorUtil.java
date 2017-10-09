@@ -153,12 +153,4 @@ public class StdColorUtil {
         }
         return r;
     }
-
-    public static void main(String[] args) {
-        System.out.println(formatColor("#abcdef"));
-        System.out.println(formatColor("#abc"));
-        System.out.println(formatColor("rgb(255,15,5)"));
-        System.out.println(formatColor("rgb(100%,0%,0%)"));
-        System.out.println(formatColor("blue"));
-    }
 }
