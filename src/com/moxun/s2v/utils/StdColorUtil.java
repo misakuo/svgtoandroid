@@ -103,6 +103,7 @@ public class StdColorUtil {
         colors.put("whitesmoke","#F5F5F5");
         colors.put("yellow","#FFFF00");
         colors.put("yellowgreen","#9ACD32");
+        colors.put("blue", "#0000FF");
         colors.put("none","#00000000");
     }
 

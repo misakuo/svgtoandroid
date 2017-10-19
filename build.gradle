@@ -1,0 +1,45 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id "org.jetbrains.intellij" version "0.1.10"
+}
+
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+intellij {
+    version 'IC-2016.3'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['test']
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+}
