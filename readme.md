@@ -1,4 +1,4 @@
-##SVG2VectorDrawable  
+## SVG2VectorDrawable  [![Build Status](https://travis-ci.org/misakuo/svgtoandroid.svg?branch=master)](https://travis-ci.org/misakuo/svgtoandroid)
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-SVG2VectorDrawable-brightgreen.svg?style=flat)](http://www.android-arsenal.com/details/1/3137)
 ![](https://img.shields.io/packagist/l/doctrine/orm.svg)  
