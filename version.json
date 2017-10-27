@@ -1,5 +1,5 @@
 {
-  "version": "1.7.1",
-  "versionCode": 17,
-  "desc": "Make XML generation locale-independent."
+  "version": "1.8",
+  "versionCode": 18,
+  "desc": "Clean up SVG to drawable conversion code and output format"
 }
