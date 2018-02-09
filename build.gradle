@@ -1,6 +1,12 @@
+//http://www.jetbrains.org/intellij/sdk/docs/tutorials/build_system.html
+
 buildscript {
+    ext.kotlin_version = '1.2.21'
     repositories {
         mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -9,6 +15,7 @@ plugins {
 }
 
 apply plugin: 'idea'
+apply plugin: 'kotlin'
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 
@@ -17,6 +24,7 @@ repositories {
 }
 
 intellij {
+    intellij.updateSinceUntilBuild false
     version 'IC-2016.3'
 }
 
@@ -42,4 +50,5 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }

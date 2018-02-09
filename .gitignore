@@ -3,3 +3,6 @@
 *.iml
 /build
 /.gradle
+svg2android.zip
+svg2android.jar
+gradle.properties

@@ -1,5 +1,5 @@
 {
-  "version": "1.8",
-  "versionCode": 18,
-  "desc": "Clean up SVG to drawable conversion code and output format"
+  "version": "1.8.1",
+  "versionCode": 19,
+  "desc": "Fix issues about float declaration"
 }
