@@ -1,6 +1,7 @@
 package com.moxun.s2v.utils;
 
 import com.intellij.psi.xml.XmlTag;
+import com.moxun.s2v.kt.VectorDrawableFixinator;
 
 /**
  * Created by moxun on 15/12/16.
@@ -70,7 +71,7 @@ public class SVGAttrParser {
     public static String getPathData(XmlTag tag) {
         String type = tag.getName();
         if (type.equals("path")) {
-            return tag.getAttributeValue("d");
+            return getPathValue(tag);
         } else if (type.equals("rect")) {
             double x = getValueF(tag, "x");
             double y = getValueF(tag, "y");
@@ -99,6 +100,14 @@ public class SVGAttrParser {
             String points = tag.getAttributeValue("points");
             return polygonToPath(points);
         }
+    }
+
+    private static String getPathValue(XmlTag tag) {
+        String rawValue = tag.getAttributeValue("d");
+        if (rawValue != null) {
+            return VectorDrawableFixinator.getContentWithFixedFloatingPoints(rawValue);
+        }
+        return rawValue;
     }
 
     private static int getValue(XmlTag tag, String key) {
