@@ -65,7 +65,7 @@ public class CommonUtil {
     public static String getValidName(String s) {
         char[] chars = s.toLowerCase().replaceAll("\\s*", "").toCharArray();
         for (int i = 0; i < chars.length; i++) {
-            if (!Character.isLetter(chars[i])) {
+            if (!Character.isLetter(chars[i]) && !Character.isDigit(chars[i])) {
                 chars[i] = '_';
             }
         }
