@@ -12,7 +12,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.JBColor;
 import com.moxun.s2v.message.ErrorMessage;
-import com.moxun.s2v.message.InfoMessage;
 import com.moxun.s2v.utils.*;
 
 import javax.swing.*;
@@ -21,7 +20,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by moxun on 15/12/14.
