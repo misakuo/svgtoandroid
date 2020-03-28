@@ -6,10 +6,8 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlAttribute;
 import com.moxun.s2v.Configuration;
-import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -54,9 +52,7 @@ public class CommonUtil {
             SAXBuilder builder = new SAXBuilder();
             org.jdom.Document document = builder.build(in);
             return document.getRootElement().getChild(key).getContent().get(0).getValue();
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return defValue;

@@ -2,16 +2,11 @@ package com.moxun.s2v.utils;
 
 
 import com.google.gson.Gson;
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
 import com.moxun.s2v.Configuration;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Created by moxun on 16/3/10.
@@ -25,7 +20,7 @@ public class UpdateUtil {
             Logger.info("Ignore check update");
             return;
         }
-        VERSION = Integer.valueOf(CommonUtil.loadMetaInf("vcode", VERSION + ""));
+        VERSION = Integer.parseInt(CommonUtil.loadMetaInf("vcode", VERSION + ""));
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -39,7 +34,7 @@ public class UpdateUtil {
                                 @Override
                                 public void run() {
                                     CommonUtil.showTopic(project,
-                                            "Plugin SVG to VectorDrawable Update",
+                                            "Plugin [SVG to VectorDrawable] has a new update",
                                             "version: " + data.version + "<br>" + data.desc,
                                             NotificationType.INFORMATION);
                                 }
