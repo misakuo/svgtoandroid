@@ -103,6 +103,7 @@ public class StdColorUtil {
         colors.put("whitesmoke","#F5F5F5");
         colors.put("yellow","#FFFF00");
         colors.put("yellowgreen","#9ACD32");
+        colors.put("blue", "#0000FF");
         colors.put("none","#00000000");
     }
 
@@ -152,13 +153,5 @@ public class StdColorUtil {
             r = "0" + r;
         }
         return r;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(formatColor("#abcdef"));
-        System.out.println(formatColor("#abc"));
-        System.out.println(formatColor("rgb(255,15,5)"));
-        System.out.println(formatColor("rgb(100%,0%,0%)"));
-        System.out.println(formatColor("blue"));
     }
 }

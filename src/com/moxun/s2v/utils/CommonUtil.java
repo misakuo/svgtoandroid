@@ -4,28 +4,14 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlFile;
 import com.moxun.s2v.Configuration;
-import com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl;
-import com.sun.org.apache.xml.internal.resolver.readers.SAXCatalogReader;
-import com.sun.xml.internal.txw2.Document;
-import com.thaiopensource.validate.SchemaReader;
-import com.thaiopensource.validate.rng.SAXSchemaReader;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import javax.xml.parsers.SAXParser;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by moxun on 16/10/9.
@@ -33,6 +19,11 @@ import java.util.Locale;
 public class CommonUtil {
 
     public static void dumpAttrs(String tag, List<XmlAttribute> attrs) {
+
+        if (!Logger.loggable(Logger.DEBUG)) {
+            return;
+        }
+
         if (attrs == null) {
             return;
         }
@@ -41,7 +32,10 @@ public class CommonUtil {
         for (XmlAttribute attr : attrs) {
             ret += attr.getName() + ":" + attr.getValue() + ",";
         }
-        ret = ret.substring(0, ret.length() - 2) + "]";
+        if (ret.lastIndexOf(",") > 0) {
+            ret = ret.substring(0, ret.lastIndexOf(","));
+        }
+        ret = ret + "]";
         Logger.debug(tag + ": " + ret);
     }
 
@@ -71,7 +65,7 @@ public class CommonUtil {
     public static String getValidName(String s) {
         char[] chars = s.toLowerCase().replaceAll("\\s*", "").toCharArray();
         for (int i = 0; i < chars.length; i++) {
-            if (!Character.isLetter(chars[i])) {
+            if (!Character.isLetter(chars[i]) && !Character.isDigit(chars[i])) {
                 chars[i] = '_';
             }
         }

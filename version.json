@@ -1,5 +1,5 @@
 {
-  "version": "1.5",
-  "versionCode": 10,
-  "desc": "Support attr 'fill-rule'<br>Add generate mode<br>Other optimization"
+  "version": "1.8.1",
+  "versionCode": 19,
+  "desc": "Fix issues about float declaration"
 }

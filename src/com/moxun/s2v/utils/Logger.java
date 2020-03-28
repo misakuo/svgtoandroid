@@ -21,6 +21,10 @@ public class Logger {
         NotificationsConfiguration.getNotificationsConfiguration().register(NAME, NotificationDisplayType.NONE);
     }
 
+    public static boolean loggable(int level) {
+        return level >= LEVEL;
+    }
+
     public static void debug(String text) {
         if (LEVEL >= DEBUG) {
             Notifications.Bus.notify(

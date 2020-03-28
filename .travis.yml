@@ -1,0 +1,8 @@
+language: java
+sudo: false
+
+script:
+  - ./gradlew build --stacktrace
+
+notifications:
+  email: false

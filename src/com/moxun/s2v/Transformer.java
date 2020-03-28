@@ -15,17 +15,13 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.moxun.s2v.message.InfoMessage;
 import com.moxun.s2v.utils.*;
 
 import java.util.*;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by moxun on 15/12/14.
@@ -39,6 +35,7 @@ public class Transformer {
     private String xmlName;
     private PsiDirectory distDir;
     private SVGParser svgParser;
+    private StyleParser styleParser;
 
     private Transformer() {
 
@@ -46,6 +43,8 @@ public class Transformer {
 
     public void transforming(CallBack callBack) {
         svgParser = new SVGParser(svg, dpi);
+        styleParser = new StyleParser(svgParser.getStyles());
+
         Logger.debug(svgParser.toString());
 
         XmlFile dist = getDistXml();
@@ -76,39 +75,39 @@ public class Transformer {
                 Logger.warn("Root tag has no subTag named 'group'");
                 parseShapeNode(svg.getRootTag(), rootTag, null);
             }
-            CodeStyleManager.getInstance(project).reformat(dist);
+            CodeStyleManager.getInstance(project).reformat(dist, true);
             callBack.onComplete(dist);
             Logger.debug(dist.toString());
         }
     }
 
     private void parseGroup(XmlTag svgTag, XmlTag target) {
-        XmlTag group = target.createChildTag("group", target.getNamespace(), null, false);
+        XmlTag groupElement = target.createChildTag("group", target.getNamespace(), null, false);
         //set group's attrs
         Map<String, String> svgGroupAttrs = svgParser.getChildAttrs(svgTag);
         List<String> acceptedAttrs = Arrays.asList("id", "transform");
 
         for (String key : svgGroupAttrs.keySet()) {
             if (AttrMapper.getAttrName(key) != null && acceptedAttrs.contains(key)) {
-                group.setAttribute(AttrMapper.getAttrName(key), svgGroupAttrs.get(key));
+                groupElement.setAttribute(AttrMapper.getAttrName(key), svgGroupAttrs.get(key));
             }
         }
 
         if (svgGroupAttrs.keySet().contains("transform")) {
             Map<String, String> trans = AttrMapper.getTranslateAttrs(svgGroupAttrs.get("transform"));
             for (String key : trans.keySet()) {
-                group.setAttribute(key, CommonUtil.formatString(trans.get(key)));
+                groupElement.setAttribute(key, CommonUtil.formatString(trans.get(key)));
             }
         }
 
         //add child tags
         //<g> was processed.
-        processSubGroups(svgTag, group);
+        processSubGroups(svgTag, groupElement);
 
         svgGroupAttrs.remove("id");
         svgGroupAttrs.remove("transform");
-        parseShapeNode(svgTag, group, svgGroupAttrs);
-        target.addSubTag(group, false);
+        parseShapeNode(svgTag, groupElement, svgGroupAttrs);
+        target.addSubTag(groupElement, false);
     }
 
     private void processSubGroups(XmlTag svgTag, XmlTag parent) {
@@ -125,41 +124,60 @@ public class Transformer {
             existedAttrs = new HashMap<String, String>();
         }
         List<XmlTag> childes = svgParser.getShapeTags(srcTag);
-        for (XmlTag child : childes) {
-            XmlTag element = distTag.createChildTag("path", distTag.getNamespace(), null, false);
-            existedAttrs.putAll(svgParser.getChildAttrs(child));
-            Logger.debug("Existed attrs: " + existedAttrs);
 
-            for (String key : existedAttrs.keySet()) {
-                if (AttrMapper.getAttrName(key) != null && AttrMapper.getAttrName(key).contains("Color")) {
-                    element.setAttribute(AttrMapper.getAttrName(key), StdColorUtil.formatColor(existedAttrs.get(key)));
-                } else if (AttrMapper.getAttrName(key) != null) {
-                    if (AttrMapper.getAttrName(key).equals("android:fillType")) {
-                        String value = existedAttrs.get(key).toLowerCase();
+        List<XmlTag> useTags = svgParser.getUseTags(srcTag);
+        Map<String, XmlTag> defsTags = svgParser.getAcceptedDefNodes();
+        for (XmlTag useTag : useTags) {
+            String href = useTag.getAttributeValue("xlink:href");
+            XmlTag def = defsTags.get(href.replace("#", ""));
+            if (def != null) {
+                XmlTag clonedTag = (XmlTag) def.copy();
+                for (XmlAttribute attribute : useTag.getAttributes()) {
+                    if (!"xlink:href".equalsIgnoreCase(attribute.getName())) {
+                        clonedTag.setAttribute(attribute.getName(), attribute.getValue());
+                    }
+                }
+                childes.add(clonedTag);
+            }
+        }
+
+        for (XmlTag child : childes) {
+            XmlTag pathElement = distTag.createChildTag("path", distTag.getNamespace(), null, false);
+            Map<String, String> myAttrs = new HashMap<String, String>();
+            myAttrs.putAll(existedAttrs);
+            myAttrs.putAll(svgParser.getChildAttrs(child));
+            Logger.debug("Existed attrs: " + myAttrs);
+
+            XmlAttribute id = child.getAttribute("class");
+            String idValue = id == null ? null : id.getValue();
+            if (idValue != null) {
+                pathElement.setAttribute("android:name", idValue);
+            }
+
+            pathElement.setAttribute("android:fillColor", decideFillColor(srcTag, child));
+
+            for (String svgElementAttribute : myAttrs.keySet()) {
+                if (AttrMapper.getAttrName(svgElementAttribute) != null && AttrMapper.getAttrName(svgElementAttribute).contains("Color")) {
+                    pathElement.setAttribute(AttrMapper.getAttrName(svgElementAttribute), StdColorUtil.formatColor(myAttrs.get(svgElementAttribute)));
+                } else if (AttrMapper.getAttrName(svgElementAttribute) != null) {
+                    if (AttrMapper.getAttrName(svgElementAttribute).equals("android:fillType")) {
+                        String value = myAttrs.get(svgElementAttribute).toLowerCase();
                         String xmlValue = "nonZero";
                         if (value.equals("evenodd")) {
                             xmlValue = "evenOdd";
                         }
-                        element.setAttribute("android:fillType", xmlValue);
+                        pathElement.setAttribute("android:fillType", xmlValue);
                     } else {
-                        element.setAttribute(AttrMapper.getAttrName(key), existedAttrs.get(key));
+                        pathElement.setAttribute(AttrMapper.getAttrName(svgElementAttribute), myAttrs.get(svgElementAttribute));
                     }
                 }
-
-                if (AttrMapper.isShapeName(child.getName())) {
-                    element.setAttribute("android:pathData", SVGAttrParser.getPathData(child));
-                }
             }
 
-            if (element.getAttribute("android:fillColor") == null) {
-                if (srcTag.getAttribute("fill") != null) {
-                    element.setAttribute("android:fillColor", StdColorUtil.formatColor(srcTag.getAttribute("fill").getValue()));
-                } else {
-                    element.setAttribute("android:fillColor", Configuration.getDefaultTint());
-                }
+            if (AttrMapper.isShapeName(child.getName())) {
+                pathElement.setAttribute("android:pathData", SVGAttrParser.getPathData(child));
             }
 
-            distTag.addSubTag(element, false);
+            distTag.addSubTag(pathElement, false);
         }
     }
 
@@ -257,9 +275,32 @@ public class Transformer {
             return transformer;
         }
     }
-    
-    public interface CallBack{
+
+    public interface CallBack {
 
         void onComplete(XmlFile dist);
+    }
+
+    //Priority: style > self > parent
+    private String decideFillColor(XmlTag group, XmlTag self) {
+        String result = Configuration.getDefaultTint();
+
+        XmlAttribute groupFill;
+        if ((groupFill = group.getAttribute("fill")) != null) {
+            result = StdColorUtil.formatColor(groupFill.getValue());
+        }
+
+        XmlAttribute selfFill;
+        if ((selfFill = self.getAttribute("fill")) != null) {
+            result = StdColorUtil.formatColor(selfFill.getValue());
+        }
+
+        XmlAttribute id = self.getAttribute("class");
+        String colorFromStyle;
+        if (id != null && id.getValue() != null && (colorFromStyle = styleParser.getFillColor(id.getValue())) != null) {
+            result = colorFromStyle;
+        }
+
+        return result;
     }
 }

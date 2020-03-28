@@ -1,8 +1,8 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.5</version>
-    <vcode>10</vcode>
+    <version>1.8.1</version>
+    <vcode>19</vcode>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -14,6 +14,26 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>1.8.1</b><br>
+      Fix issue about float declaration. (#31)<br>
+      <b>1.8</b><br>
+      Clean up SVG to drawable conversion code and output format.<br>
+      <b>1.7.1</b><br>
+      Make XML generation locale-independent.<br>
+      <b>1.7</b><br>
+      Support the 'use' and 'defs' tags.<br>
+      Support the 'opacity' attribute.<br>
+      <b>1.6.2</b><br>
+      Add the missing library 'org.w3c.css.sac' on Android Studio.<br>
+      Insert 'pathData' attribute at the end of all attributes.<br>
+      <b>1.6.1</b><br>
+      Better support for polygon parsing.<br>
+      <b>1.6</b><br>
+      Supports SVG with CSS styles; Improve conversion accuracy.<br>
+      <b>1.5.2</b><br>
+      Fix the NumberFormatException.<br>
+      <b>1.5.1</b><br>
+      Fix the StringIndexOutOfBoundsException.<br>
       <b>1.5</b><br>
       Support attr 'fill-rule'; And many improvements, it is highly recommended to upgrade to this version<br>
       <b>1.4.6</b><br>
@@ -69,7 +89,7 @@
     <actions>
         <!-- Add your actions here -->
         <action class="com.moxun.s2v.S2V" id="moxun.s2v" text="SVG to VectorDrawable"
-                description="Tool for transforming SVG to VectorDrawable" icon="/icons/icon_new.png">
+                description="Tool for transforming SVG to VectorDrawable" icon="/icons/icon.png">
             <add-to-group group-id="MainToolBar" anchor="last"/>
         </action>
         
