@@ -6,6 +6,9 @@
 README:
 [中文](https://github.com/misakuo/svgtoandroid/blob/master/readme.md) | [English](https://github.com/misakuo/svgtoandroid/blob/master/readme_en.md)
 
+### 作者的碎碎念
+翻了git记录，这个项目的第一行代码是在2015年12月14日创建的，近5年前。彼时Android刚推出VectorDrawable支持的特性不久，在一个新项目里我们想尝试引入矢量图标，主要是为了方便运行时着色和无损缩放等特性。当时发现Android并不能直接支持svg展示，需要经过一层语法转换，许多标签也并不支持，所以就萌生了写个插件做自动转换的念头（大力出奇迹）。当时刚应届毕业入职淘宝不久，在的团队工作压力也不是很大，所以花了大概两三天时间写完了第一版，随后陆陆续续随着Android的迭代也加了对transform、defs、use、style等特性的支持，直到现在，一共Release了20个版本，共有12W+次下载，接近6W独立用户（Plugin Market的统计数据）。感谢每一个使用过此插件的用户，感谢每一条Issue反馈，感谢每一个参与过贡献PR的人。
+随着Studio版本从1.x更新到现在的3.x，对矢量图导入支持得越来越完美，这个插件也到了该被送上阁楼储藏的时候。后面我还是会抽业余时间继续维护，但可能无法快速跟进新特性的支持了。现在回看5年前的代码，无论是设计还是实现，都透露着稚嫩。现在对比5年前自己还是有了一些微小的进步，还要继续努力呀
 
 ### 简介
 Intellij Platform插件，通过其可以完成从svg文件到Android VectorDrawable的自动化转换。
