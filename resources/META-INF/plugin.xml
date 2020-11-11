@@ -1,8 +1,8 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.8.2</version>
-    <vcode>20</vcode>
+    <version>1.8.3</version>
+    <vcode>21</vcode>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -14,6 +14,9 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>1.8.3</b><br>
+      Fix compatible issue with Android Studio 4.1. (#51,#54)<br>
+      New icon. (#52)<br>
       <b>1.8.2</b><br>
       Fix compatible issue with Android Studio 3.6+. (#47,#48)<br>
       Fix incorrect output name when source file name with numbers. (#46)<br>
@@ -73,6 +76,8 @@
     <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
     -->
+    <depends>org.jetbrains.android</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
@@ -92,7 +97,7 @@
     <actions>
         <!-- Add your actions here -->
         <action class="com.moxun.s2v.S2V" id="moxun.s2v" text="SVG to VectorDrawable"
-                description="Tool for transforming SVG to VectorDrawable" icon="/icons/icon.png">
+                description="Tool for transforming SVG to VectorDrawable" icon="/icons/s2v_icon_16.svg">
             <add-to-group group-id="MainToolBar" anchor="last"/>
         </action>
         
