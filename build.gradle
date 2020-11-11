@@ -1,7 +1,7 @@
 //http://www.jetbrains.org/intellij/sdk/docs/tutorials/build_system.html
 
 buildscript {
-    ext.kotlin_version = '1.2.21'
+    ext.kotlin_version = '1.3.72'
     repositories {
         maven {
             url 'http://maven.aliyun.com/nexus/content/repositories/releases/'
@@ -14,7 +14,7 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.4.17"
+    id "org.jetbrains.intellij" version "0.6.3"
 }
 
 apply plugin: 'idea'
@@ -31,7 +31,9 @@ repositories {
 
 intellij {
     intellij.updateSinceUntilBuild false
-    version 'IC-2016.3'
+    version '201.8743.12'
+    type 'IC'
+    plugins = ['com.intellij.java','android', 'java']
 }
 
 sourceSets {
@@ -56,5 +58,11 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+
+runIde {
+    // Absolute path to installed target 3.5 Android Studio to use as IDE Development Instance
+    // The "Contents" directory is macOS specific.
+    ideDirectory '/Applications/Android Studio.app/Contents'
 }
