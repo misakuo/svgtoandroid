@@ -9,7 +9,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ColorChooser;
-import com.intellij.ui.JBColor;
 import com.moxun.s2v.utils.CommonUtil;
 
 import javax.swing.*;
@@ -30,12 +29,14 @@ public class Configuration implements Configurable {
     private JTextField prefix;
     private JButton pickColor;
     private JLabel color;
+    private JCheckBox useSystemTools;
 
     private static final String KEY_DEFAULT_DIR = "s2v_default_dir";
     private static final String KEY_AUTO_CHECK_UPDATE = "s2v_auto_check_update";
     private static final String KEY_DELETE_EXISTED_XML = "s2v_delete_existed_xml";
     private static final String KEY_PREFIX = "s2v_vector_prefix";
     private static final String KEY_DEFAULT_TINT = "s2v_default_tint";
+    private static final String KEY_USE_SYSTEM_TOOLS = "s2v_use_sys_tools";
 
     @Override
     public String getDisplayName() {
@@ -98,6 +99,7 @@ public class Configuration implements Configurable {
         PropertiesComponent.getInstance().setValue(KEY_DEFAULT_DIR, svgDir.getText());
         PropertiesComponent.getInstance().setValue(KEY_AUTO_CHECK_UPDATE, String.valueOf(autoCheckUpdateCheckBox.isSelected()));
         PropertiesComponent.getInstance().setValue(KEY_DELETE_EXISTED_XML, String.valueOf(overrideExisted.isSelected()));
+        PropertiesComponent.getInstance().setValue(KEY_USE_SYSTEM_TOOLS, String.valueOf(useSystemTools.isSelected()));
         PropertiesComponent.getInstance().setValue(KEY_PREFIX, prefix.getText());
         PropertiesComponent.getInstance().setValue(KEY_DEFAULT_TINT, color.getText());
     }
@@ -130,5 +132,9 @@ public class Configuration implements Configurable {
 
     public static String getDefaultTint() {
         return PropertiesComponent.getInstance().getValue(KEY_DEFAULT_TINT, "#FF000000");
+    }
+
+    public static boolean useSystemTools() {
+        return PropertiesComponent.getInstance().getBoolean(KEY_USE_SYSTEM_TOOLS, true);
     }
 }

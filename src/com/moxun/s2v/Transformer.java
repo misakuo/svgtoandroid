@@ -1,5 +1,6 @@
 package com.moxun.s2v;
 
+import com.android.ide.common.vectordrawable.Svg2Vector;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
@@ -8,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -20,7 +22,10 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.moxun.s2v.utils.*;
+import org.apache.http.util.TextUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -42,42 +47,63 @@ public class Transformer {
     }
 
     public void transforming(CallBack callBack) {
-        svgParser = new SVGParser(svg, dpi);
-        styleParser = new StyleParser(svgParser.getStyles());
-
-        Logger.debug(svgParser.toString());
-
-        XmlFile dist = getDistXml();
-        XmlDocument document = dist.getDocument();
-        if (document != null && document.getRootTag() != null) {
-            XmlTag rootTag = document.getRootTag();
-
-            //set attr to root tag
+        if (Configuration.useSystemTools()) {
+            Logger.info("use system tools to parse");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            File svgFile = VfsUtilCore.virtualToIoFile(svg.getVirtualFile());
             try {
-                rootTag.getAttribute("android:width").setValue(svgParser.getWidth());
-                rootTag.getAttribute("android:height").setValue(svgParser.getHeight());
-                rootTag.getAttribute("android:viewportWidth").setValue(svgParser.getViewportWidth());
-                rootTag.getAttribute("android:viewportHeight").setValue(svgParser.getViewportHeight());
-
-                if (svgParser.getAlpha().length() > 0) {
-                    rootTag.setAttribute("android:alpha", svgParser.getAlpha());
+                String errorCode = Svg2Vector.parseSvgToXml(svgFile, stream);
+                if (TextUtils.isEmpty(errorCode)) {
+                    String result = new String(stream.toByteArray());
+                    XmlFile targetFile = (XmlFile) PsiFileFactory.getInstance(project).createFileFromText(xmlName, StdFileTypes.XML, result);
+                    CodeStyleManager.getInstance(project).reformat(targetFile, true);
+                    Logger.debug("parse complete [system]: " + targetFile.getName());
+                    callBack.onComplete(targetFile);
+                } else {
+                    Logger.error("parse failed: " + errorCode);
                 }
-            } catch (NullPointerException npe) {
-                //do nothing, because those attr is exist certainly.
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        } else {
+            Logger.info("use builtin tools to parse");
+            svgParser = new SVGParser(svg, dpi);
+            styleParser = new StyleParser(svgParser.getStyles());
 
-            //generate group
-            if (svgParser.hasGroupTag()) {
-                for (XmlTag g : svgParser.getGroups()) {
-                    parseGroup(g, rootTag);
+            Logger.debug(svgParser.toString());
+
+            XmlFile dist = getDistXml();
+            XmlDocument document = dist.getDocument();
+            if (document != null && document.getRootTag() != null) {
+                XmlTag rootTag = document.getRootTag();
+
+                //set attr to root tag
+                try {
+                    rootTag.getAttribute("android:width").setValue(svgParser.getWidth());
+                    rootTag.getAttribute("android:height").setValue(svgParser.getHeight());
+                    rootTag.getAttribute("android:viewportWidth").setValue(svgParser.getViewportWidth());
+                    rootTag.getAttribute("android:viewportHeight").setValue(svgParser.getViewportHeight());
+
+                    if (svgParser.getAlpha().length() > 0) {
+                        rootTag.setAttribute("android:alpha", svgParser.getAlpha());
+                    }
+                } catch (NullPointerException npe) {
+                    //do nothing, because those attr is exist certainly.
                 }
-            } else {
-                Logger.warn("Root tag has no subTag named 'group'");
-                parseShapeNode(svg.getRootTag(), rootTag, null);
+
+                //generate group
+                if (svgParser.hasGroupTag()) {
+                    for (XmlTag g : svgParser.getGroups()) {
+                        parseGroup(g, rootTag);
+                    }
+                } else {
+                    Logger.warn("Root tag has no subTag named 'group'");
+                    parseShapeNode(svg.getRootTag(), rootTag, null);
+                }
+                CodeStyleManager.getInstance(project).reformat(dist, true);
+                Logger.debug("parse complete [inner]: " + dist.getName());
+                callBack.onComplete(dist);
             }
-            CodeStyleManager.getInstance(project).reformat(dist, true);
-            callBack.onComplete(dist);
-            Logger.debug(dist.toString());
         }
     }
 
