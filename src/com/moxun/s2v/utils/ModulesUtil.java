@@ -6,7 +6,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
@@ -29,7 +28,7 @@ public class ModulesUtil {
 
     public Set<String> getModules() {
         Set<String> modules = new HashSet<String>();
-        PsiDirectory baseDir = PsiDirectoryFactory.getInstance(project).createDirectory(project.getBaseDir());
+        PsiDirectory baseDir = PsiDirectoryFactory.getInstance(project).createDirectory(getProjectRootDir(project));
         if (isAndroidProject(baseDir)) {
             Logger.debug(project.getName() + " is an Android project");
             PsiDirectory[] dirs = baseDir.getSubdirectories();
@@ -60,7 +59,7 @@ public class ModulesUtil {
     }
 
     public PsiDirectory getResDir(String moduleName) {
-        PsiDirectory baseDir = PsiDirectoryFactory.getInstance(project).createDirectory(project.getBaseDir());
+        PsiDirectory baseDir = PsiDirectoryFactory.getInstance(project).createDirectory(getProjectRootDir(project));
         PsiDirectory moduleDir = baseDir.findSubdirectory(moduleName);
         if (moduleDir != null && moduleDir.isDirectory()) {
             PsiDirectory srcDir = moduleDir.findSubdirectory("src");
@@ -78,7 +77,7 @@ public class ModulesUtil {
     }
 
     public PsiDirectory getOrCreateDrawableDir(String moduleName,String dirName) {
-        PsiDirectory baseDir = PsiDirectoryFactory.getInstance(project).createDirectory(project.getBaseDir());
+        PsiDirectory baseDir = PsiDirectoryFactory.getInstance(project).createDirectory(getProjectRootDir(project));
         PsiDirectory moduleDir = baseDir.findSubdirectory(moduleName);
         if (moduleDir != null) {
             PsiDirectory srcDir = moduleDir.findSubdirectory("src");
@@ -173,5 +172,9 @@ public class ModulesUtil {
             }
         }
         return hasGradle && hasSrc;
+    }
+
+    private VirtualFile getProjectRootDir(Project project) {
+        return LocalFileSystem.getInstance().findFileByPath(project.getBasePath());
     }
 }
