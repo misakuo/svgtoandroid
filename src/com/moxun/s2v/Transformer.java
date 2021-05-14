@@ -58,13 +58,14 @@ public class Transformer {
                     String result = new String(stream.toByteArray()).replaceAll("\r", "");
                     XmlFile targetFile = (XmlFile) PsiFileFactory.getInstance(project).createFileFromText(xmlName, StdFileTypes.XML, result);
                     CodeStyleManager.getInstance(project).reformat(targetFile, true);
-                    Logger.debug("parse complete [system]: " + targetFile.getName());
+                    Logger.warn("parse complete [system]: " + targetFile.getName() + ", length: " + result.length());
                     callBack.onComplete(targetFile);
                 } else {
                     Logger.error("parse failed: " + errorCode);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                Logger.error("parse exception: "+ e.toString());
             }
         } else {
             Logger.info("use builtin tools to parse");
