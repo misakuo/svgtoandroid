@@ -5,6 +5,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -54,16 +55,17 @@ public class Transformer {
             try {
                 String errorCode = Svg2Vector.parseSvgToXml(svgFile, stream);
                 if (TextUtils.isEmpty(errorCode)) {
-                    String result = new String(stream.toByteArray());
+                    String result = new String(stream.toByteArray()).replaceAll("\r", "");
                     XmlFile targetFile = (XmlFile) PsiFileFactory.getInstance(project).createFileFromText(xmlName, StdFileTypes.XML, result);
                     CodeStyleManager.getInstance(project).reformat(targetFile, true);
-                    Logger.debug("parse complete [system]: " + targetFile.getName());
+                    Logger.warn("parse complete [system]: " + targetFile.getName() + ", length: " + result.length());
                     callBack.onComplete(targetFile);
                 } else {
                     Logger.error("parse failed: " + errorCode);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                Logger.error("parse exception: "+ e.toString());
             }
         } else {
             Logger.info("use builtin tools to parse");
@@ -222,6 +224,12 @@ public class Transformer {
                         protected void run(Result result) throws Throwable {
                             PsiDirectory directory = modulesUtil.getOrCreateDrawableDir(moduleName, getDrawableDirName());
                             PsiFile psiFile = directory.findFile(xmlName);
+
+                            DocumentImpl document = (DocumentImpl) file.getViewProvider().getDocument();
+                            if (document != null) {
+                                document.setAcceptSlashR(true);
+                            }
+
                             if (psiFile != null) {
                                 if (Configuration.isOverrideExisted()) {
                                     Logger.warn(xmlName + " is existed, delete it.");

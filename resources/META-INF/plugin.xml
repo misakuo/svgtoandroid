@@ -1,8 +1,8 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.9.0</version>
-    <vcode>22</vcode>
+    <version>1.9.2</version>
+    <vcode>24</vcode>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -14,6 +14,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>1.9.2</b><br>
+      Fix empty output content on windows os.<br>
+      <b>1.9.1</b><br>
+      Skip check line separators.<br>
       <b>1.9.0</b><br>
       Use the svg parser from Image Assets Studio by default.<br>
       <b>1.8.3</b><br>
