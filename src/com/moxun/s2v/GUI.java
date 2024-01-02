@@ -46,7 +46,7 @@ public class GUI {
 
     public GUI(Project project) {
         this.project = project;
-        frame = new JFrame("SVG to VectorDrawable (" + CommonUtil.loadMetaInf("version", "") + ")");
+        frame = new JFrame("SVG to VectorDrawable");
         modulesUtil = new ModulesUtil(project);
         distDirList.clear();
         svgPath.setFocusable(false);
@@ -212,8 +212,6 @@ public class GUI {
         frame.pack();
         frame.setLocationRelativeTo(frame.getParent());
         frame.setVisible(true);
-
-        UpdateUtil.checkUpdate(project);
     }
 
     private boolean check() {

@@ -1,8 +1,7 @@
 <idea-plugin version="2">
     <id>com.moxun.plugin.s2v</id>
     <name>SVG2VectorDrawable</name>
-    <version>1.9.2</version>
-    <vcode>24</vcode>
+    <version>1.9.3</version>
     <vendor email="furmint@foxmail.com">moxun</vendor>
 
     <description><![CDATA[
@@ -14,6 +13,8 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>1.9.3</b><br>
+      Fix compatibility issue with Android Studio Flamingo and higher.<br>
       <b>1.9.2</b><br>
       Fix empty output content on windows os.<br>
       <b>1.9.1</b><br>
@@ -83,22 +84,15 @@
     <depends>com.intellij.modules.lang</depends>
     -->
     <depends>org.jetbrains.android</depends>
+    <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <internalFileTemplate name="vector"/>
         <fileTypeFactory implementation="com.moxun.s2v.MyFileTypeFactory"/>
-        <applicationConfigurable instance="com.moxun.s2v.Configuration"/>
+        <applicationConfigurable displayName="SVG2VectorDrawable" instance="com.moxun.s2v.Configuration"/>
     </extensions>
-
-    <application-components>
-        <!-- Add your application components here -->
-    </application-components>
-
-    <project-components>
-        <!-- Add your project components here -->
-    </project-components>
 
     <actions>
         <!-- Add your actions here -->

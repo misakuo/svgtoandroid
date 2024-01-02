@@ -10,7 +10,9 @@ import javax.swing.*;
 
 /**
  * Created by moxun on 16/3/10.
+ *
  */
+@Deprecated
 public class UpdateUtil {
     private static int VERSION = Integer.MAX_VALUE;
     private static final String URL = "https://raw.githubusercontent.com/misakuo/svgtoandroid/master/version.json";
