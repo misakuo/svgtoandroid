@@ -6,6 +6,12 @@ buildscript {
         maven {
             url 'http://maven.aliyun.com/nexus/content/repositories/releases/'
         }
+        maven {
+            url 'http://mirrors.cloud.tencent.com/nexus/repository/maven-public'
+        }
+        maven {
+            url = 'https://plugins.gradle.org/m2/'
+        }
         mavenCentral()
     }
     dependencies {
